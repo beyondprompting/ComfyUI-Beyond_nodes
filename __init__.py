@@ -25,30 +25,30 @@ from .Masking import Mask_Rectangular_Area
 # V1-style registration (kept for backward compatibility)
 # V3 nodes also have comfy_entrypoint() for modern registration
 NODE_CLASS_MAPPINGS = {
-    "Compositor3": Compositor3,
-    "CompositorConfig3": CompositorConfig3,
-    "CompositorTools3": CompositorTools3,
-    "CompositorTransformsOutV3": CompositorTransformsOutV3,
-    "CompositorMasksOutputV3": CompositorMasksOutputV3,
+    # "Compositor3-🦾": Compositor3,
+    # "CompositorConfig3-🦾": CompositorConfig3,
+    # "CompositorTools3-🦾": CompositorTools3,
+    # "CompositorTransformsOutV3-🦾": CompositorTransformsOutV3,
+    # "CompositorMasksOutputV3-🦾": CompositorMasksOutputV3,
     # Utilities 
-    "CompositorColorPicker": CompositorColorPicker,
-    "ImageColorSampler": ImageColorSampler,
+    # "CompositorColorPicker-🦾": CompositorColorPicker,
+    # "ImageColorSampler-🦾": ImageColorSampler,
     
     # V4 nodes
-    "Compositor4": Compositor4,
-    "CompositorConfig4": CompositorConfig4,
-    "Compositor4TransformsOut": Compositor4TransformsOut,
-    "Compositor4MasksOutput": Compositor4MasksOutput,
+    "Compositor4-🦾": Compositor4,
+    "CompositorConfig4-🦾": CompositorConfig4,
+    "Compositor4TransformsOut-🦾": Compositor4TransformsOut,
+    "Compositor4MasksOutput-🦾": Compositor4MasksOutput,
 
     # Logic Nodes
-    "Compare-🔬": Compare,
-    "Int-🔬": Int,
-    "Float-🔬": Float,
-    "Bool-🔬": Bool,
-    "String-🔬": String,
-    "If ANY return A else B-🔬": IfExecute,
-    "DebugPrint-🔬": DebugPrint,
-    # "If ANY execute A else B-🔬": IfExecuteNode,
+    "Compare-🦾": Compare,
+    "Int-🦾": Int,
+    "Float-🦾": Float,
+    "Bool-🦾": Bool,
+    "String-🦾": String,
+    "If ANY return A else B-🦾": IfExecute,
+    "DebugPrint-🦾": DebugPrint,
+    # "If ANY execute A else B-🦾": IfExecuteNode,
     "TwoWaySwitch-🦾": TwoWaySwitch,
     
     # Masking Nodes
@@ -56,30 +56,30 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Compositor3": "💜 Compositor (V3)",
-    "CompositorConfig3": "💜 Compositor Config (V3)",
-    "CompositorTools3": "💜 Compositor Tools (V3)",
-    "CompositorTransformsOutV3": "💜 Compositor Transforms Output (V3)",
-    "CompositorMasksOutputV3": "💜 Compositor Masks Output (V3)",
+    # "Compositor3": "💜 Compositor (V3)",
+    # "CompositorConfig3": "💜 Compositor Config (V3)",
+    # "CompositorTools3": "💜 Compositor Tools (V3)",
+    # "CompositorTransformsOutV3": "💜 Compositor Transforms Output (V3)",
+    # "CompositorMasksOutputV3": "💜 Compositor Masks Output (V3)",
     # Utilities
-    "CompositorColorPicker": "💜 Compositor Color Picker",
-    "ImageColorSampler": "💜 Image Color Sampler",
+    # "CompositorColorPicker": "💜 Compositor Color Picker",
+    # "ImageColorSampler": "💜 Image Color Sampler",
     
     # V4 nodes
-    "Compositor4": "💜 Compositor V4",
-    "CompositorConfig4": "💜 Compositor Config V4",
-    "Compositor4TransformsOut": "💜 Compositor Transforms Output V4",
-    "Compositor4MasksOutput": "💜 Compositor Masks Output V4",
+    "Compositor4": "🦾 Compositor V4",
+    "CompositorConfig4": "🦾 Compositor Config V4",
+    "Compositor4TransformsOut": "🦾 Compositor Transforms Output V4",
+    "Compositor4MasksOutput": "🦾 Compositor Masks Output V4",
 
     # Logic Nodes
-    "Compare-🔬": "Compare",
-    "Int-🔬": "Int",
-    "Float-🔬": "Float",
-    "Bool-🔬": "Bool",
-    "String-🔬": "String",
-    "If ANY return A else B-🔬": "If ANY return A else B",
-    "DebugPrint-🔬": "DebugPrint",
-    # "If ANY execute A else B-🔬": "If ANY execute A else B",
+    "Compare-🦾": "Compare",
+    "Int-🦾": "Int",
+    "Float-🦾": "Float",
+    "Bool-🦾": "Bool",
+    "String-🦾": "String",
+    "If ANY return A else B-🦾": "If ANY return A else B",
+    "DebugPrint-🦾": "DebugPrint",
+    # "If ANY execute A else B-🦾": "If ANY execute A else B",
     "TwoWaySwitch-🦾": "Two Way Switch 🦾",
 
     # Masking Nodes
