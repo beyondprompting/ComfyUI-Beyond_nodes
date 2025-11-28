@@ -42,7 +42,7 @@ const BUTTON_FONT_SIZE = "12px";
 const ICON_FONT_SIZE = "14px";
 
 app.registerExtension({
-  name: "Comfy.Compositor4-Beyond_nodes",
+  name: "Comfy.Compositor4-beyond_nodes",
 
   async setup(app) {
     api.addEventListener("compositor4_init", executedMessageHandler);
