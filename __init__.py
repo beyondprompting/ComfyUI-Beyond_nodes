@@ -1,14 +1,14 @@
 # author: beyondprompting@gmail.com
 # Logic Nodes
 # Fork from Enricos Nodes
-from .Compositor3 import Compositor3
-from .CompositorConfig3 import CompositorConfig3
-from .CompositorTools3 import CompositorTools3
+# from .Compositor3 import Compositor3
+# from .CompositorConfig3 import CompositorConfig3
+# from .CompositorTools3 import CompositorTools3
 
-from .CompositorTransformsOut3 import CompositorTransformsOutV3
-from .CompositorMasksOutputV3 import CompositorMasksOutputV3
-from .CompositorColorPicker import CompositorColorPicker
-from .ImageColorSampler import ImageColorSampler
+# from .CompositorTransformsOut3 import CompositorTransformsOutV3
+# from .CompositorMasksOutputV3 import CompositorMasksOutputV3
+# from .CompositorColorPicker import CompositorColorPicker
+# from .ImageColorSampler import ImageColorSampler
 
 # V4 nodes - new compositor with integrated mask handling
 from .Compositor4 import Compositor4
@@ -35,10 +35,10 @@ NODE_CLASS_MAPPINGS = {
     # "ImageColorSampler-🦾": ImageColorSampler,
     
     # V4 nodes
-    "Compositor4-bp": Compositor4,
-    "CompositorConfig4-bp": CompositorConfig4,
-    "Compositor4TransformsOut-bp": Compositor4TransformsOut,
-    "Compositor4MasksOutput-bp": Compositor4MasksOutput,
+    "Compositor4": Compositor4,
+    "CompositorConfig4": CompositorConfig4,
+    "Compositor4TransformsOut": Compositor4TransformsOut,
+    "Compositor4MasksOutput": Compositor4MasksOutput,
 
     # Logic Nodes
     "Compare-🦾": Compare,
@@ -66,10 +66,10 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # "ImageColorSampler": "💜 Image Color Sampler",
     
     # V4 nodes
-    "Compositor4-bp": "Compositor V4 🦾",
-    "CompositorConfig4-bp": "Compositor Config V4 🦾",
-    "Compositor4TransformsOut-bp": "Compositor Transforms Output V4 🦾",
-    "Compositor4MasksOutput-bp": "Compositor Masks Output V4 🦾",
+    "Compositor4": "🦾Compositor V4 ",
+    "CompositorConfig4": "🦾Compositor Config V4 🦾",
+    "Compositor4TransformsOut": "🦾Compositor Transforms Output V4 🦾",
+    "Compositor4MasksOutput": "🦾Compositor Masks Output V4 🦾",
 
     # Logic Nodes
     "Compare-🦾": "Compare 🦾",
