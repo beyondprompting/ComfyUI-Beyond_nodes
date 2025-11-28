@@ -81,7 +81,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # "If ANY execute A else B-🔬": "If ANY execute A else B",
 
     # Masking Nodes
-    "MaskRectArea-🦾": "Mask Rectanguar Area Advanced"
+    "MaskRectArea-🦾": "Mask Rectangular Area"
 
 }
 
