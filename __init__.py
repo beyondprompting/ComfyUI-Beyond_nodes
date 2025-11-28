@@ -51,7 +51,7 @@ NODE_CLASS_MAPPINGS = {
     # "If ANY execute A else B-🔬": IfExecuteNode,
     
     # Masking Nodes
-    "MaskRectAreaAdvanced": Mask_Rect_Area_Advanced,
+    "MaskRectAreaAdvanced-🦾": Mask_Rect_Area_Advanced,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -81,7 +81,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # "If ANY execute A else B-🔬": "If ANY execute A else B",
 
     # Masking Nodes
-    "MaskRectAreaAdvanced": "Mask Rectanguar Area Advanced"
+    "MaskRectAreaAdvanced-🦾": "Mask Rectanguar Area Advanced"
 
 }
 
