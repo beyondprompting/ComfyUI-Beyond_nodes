@@ -36,7 +36,7 @@ NODE_CLASS_MAPPINGS = {
     
     # V4 nodes
     "Compositor4": Compositor4,
-    "CompositorConfig4-beyond_nodes": CompositorConfig4,
+    "CompositorConfig4-Beyond_nodes": CompositorConfig4,
     "Compositor4TransformsOut": Compositor4TransformsOut,
     "Compositor4MasksOutput": Compositor4MasksOutput,
 
@@ -67,7 +67,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     
     # V4 nodes
     "Compositor4": "🦾Compositor V4 ",
-    "CompositorConfig4-beyond_nodes": "🦾Compositor Config V4 🦾",
+    "CompositorConfig4-Beyond_nodes": "🦾 Compositor Config V4 🦾",
     "Compositor4TransformsOut": "🦾Compositor Transforms Output V4 🦾",
     "Compositor4MasksOutput": "🦾Compositor Masks Output V4 🦾",
 
