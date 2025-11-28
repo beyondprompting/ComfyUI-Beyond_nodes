@@ -18,7 +18,7 @@ from .Compositor4MasksOutput import Compositor4MasksOutput
 
 # Logic Nodes
 # Author : theUpsiders 
-from .Logic import Compare, Int, Float, Bool, String, IfExecute, DebugPrint, AlwaysEqualProxy
+from .Logic import Compare, Int, Float, Bool, String, IfExecute, DebugPrint, AlwaysEqualProxy, TwoWaySwitch
 
 from .Masking import Mask_Rectangular_Area
 
@@ -49,6 +49,7 @@ NODE_CLASS_MAPPINGS = {
     "If ANY return A else B-🔬": IfExecute,
     "DebugPrint-🔬": DebugPrint,
     # "If ANY execute A else B-🔬": IfExecuteNode,
+    "TwoWaySwitch-🦾": TwoWaySwitch,
     
     # Masking Nodes
     "MaskRectArea-🦾": Mask_Rectangular_Area,
@@ -79,6 +80,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "If ANY return A else B-🔬": "If ANY return A else B",
     "DebugPrint-🔬": "DebugPrint",
     # "If ANY execute A else B-🔬": "If ANY execute A else B",
+    "TwoWaySwitch-🦾": "Two Way Switch 🦾",
 
     # Masking Nodes
     "MaskRectArea-🦾": "Mask Rectangular Area"
