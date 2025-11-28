@@ -157,7 +157,7 @@ class CompositorConfig4(io.ComfyNode):
     @classmethod
     def define_schema(cls) -> io.Schema:
         return io.Schema(
-            node_id="CompositorConfig4-Beyond_nodes",
+            node_id="CompositorConfig4-beyond_nodes",
             display_name="🦾 Compositor Config V4 🦾",
             category="image",
             description="Configuration node for the compositor system V4. Accepts up to 8 images with optional masks, applies masking to create RGBA composites, and provides canvas sizing controls. Masks are serialized to disk with fixed naming (cfg{node_id}-mask{index}.png). The 'onConfigChangedContinue' pause option allows time to build compositions before continuing execution. Outputs configuration objects used by compositor V4 nodes.",

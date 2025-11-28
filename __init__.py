@@ -35,10 +35,10 @@ NODE_CLASS_MAPPINGS = {
     # "ImageColorSampler-🦾": ImageColorSampler,
     
     # V4 nodes
-    "Compositor4-Beyond_nodes": Compositor4,
-    "CompositorConfig4-Beyond_nodes": CompositorConfig4,
-    "Compositor4TransformsOut": Compositor4TransformsOut,
-    "Compositor4MasksOutput": Compositor4MasksOutput,
+    "Compositor4-beyond_nodes": Compositor4,
+    "CompositorConfig4-beyond_nodes": CompositorConfig4,
+    "Compositor4TransformsOut-beyond_nodes": Compositor4TransformsOut,
+    "Compositor4MasksOutput-beyond_nodes": Compositor4MasksOutput,
 
     # Logic Nodes
     "Compare-🦾": Compare,
@@ -66,10 +66,10 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # "ImageColorSampler": "💜 Image Color Sampler",
     
     # V4 nodes
-    "Compositor4-Beyond_nodes": "🦾Compositor V4 ",
-    "CompositorConfig4-Beyond_nodes": "🦾 Compositor Config V4 🦾",
-    "Compositor4TransformsOut": "🦾Compositor Transforms Output V4 🦾",
-    "Compositor4MasksOutput": "🦾Compositor Masks Output V4 🦾",
+    "Compositor4-beyond_nodes": "🦾 Compositor V4 ",
+    "CompositorConfig4-beyond_nodes": "🦾 Compositor Config V4 🦾",
+    "Compositor4TransformsOut-beyond_nodes": "🦾 Compositor Transforms Output V4 🦾",
+    "Compositor4MasksOutput-beyond_nodes": "🦾 Compositor Masks Output V4 🦾",
 
     # Logic Nodes
     "Compare-🦾": "Compare 🦾",
