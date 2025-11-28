@@ -35,10 +35,10 @@ NODE_CLASS_MAPPINGS = {
     # "ImageColorSampler-🦾": ImageColorSampler,
     
     # V4 nodes
-    "Compositor4-🦾": Compositor4,
-    "CompositorConfig4-🦾": CompositorConfig4,
-    "Compositor4TransformsOut-🦾": Compositor4TransformsOut,
-    "Compositor4MasksOutput-🦾": Compositor4MasksOutput,
+    "Compositor4-bp": Compositor4,
+    "CompositorConfig4-bp": CompositorConfig4,
+    "Compositor4TransformsOut-bp": Compositor4TransformsOut,
+    "Compositor4MasksOutput-bp": Compositor4MasksOutput,
 
     # Logic Nodes
     "Compare-🦾": Compare,
@@ -66,17 +66,17 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # "ImageColorSampler": "💜 Image Color Sampler",
     
     # V4 nodes
-    "Compositor4": "🦾 Compositor V4",
-    "CompositorConfig4": "🦾 Compositor Config V4",
-    "Compositor4TransformsOut": "🦾 Compositor Transforms Output V4",
-    "Compositor4MasksOutput": "🦾 Compositor Masks Output V4",
+    "Compositor4-bp": "Compositor V4 🦾",
+    "CompositorConfig4-bp": "Compositor Config V4 🦾",
+    "Compositor4TransformsOut-bp": "Compositor Transforms Output V4 🦾",
+    "Compositor4MasksOutput-bp": "Compositor Masks Output V4 🦾",
 
     # Logic Nodes
-    "Compare-🦾": "Compare",
-    "Int-🦾": "Int",
-    "Float-🦾": "Float",
-    "Bool-🦾": "Bool",
-    "String-🦾": "String",
+    "Compare-🦾": "Compare 🦾",
+    "Int-🦾": "Int 🦾",
+    "Float-🦾": "Float 🦾",
+    "Bool-🦾": "Bool 🦾",
+    "String-🦾": "String 🦾",
     "If ANY return A else B-🦾": "If ANY return A else B",
     "DebugPrint-🦾": "DebugPrint",
     # "If ANY execute A else B-🦾": "If ANY execute A else B",
