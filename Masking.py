@@ -4,7 +4,7 @@ import numpy as np
 
 # MASK RECT AREA ADVANCED
 
-class WAS_Mask_Rect_Area_Advanced:
+class Mask_Rect_Area_Advanced:
     # Creates a rectangle mask using pixels relative to image size.
 
     def __init__(self):
