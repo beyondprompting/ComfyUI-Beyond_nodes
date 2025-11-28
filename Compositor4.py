@@ -132,7 +132,7 @@ class Compositor4(io.ComfyNode):
     @classmethod
     def define_schema(cls) -> io.Schema:
         return io.Schema(
-            node_id="Compositor4",
+            node_id="Compositor4-beyond_nodes",
             display_name="Compositor V4",
             category="image",
             description="Interactive compositor canvas for positioning, scaling, rotating, and arranging multiple images with real-time preview and mask support. Provides a visual editor with layers panel, alignment tools, and snap-to-grid functionality.",
