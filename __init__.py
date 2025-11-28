@@ -41,18 +41,18 @@ NODE_CLASS_MAPPINGS = {
     "Compositor4MasksOutput-beyond_nodes": Compositor4MasksOutput,
 
     # Logic Nodes
-    "Compare-🦾": Compare,
-    "Int-🦾": Int,
-    "Float-🦾": Float,
-    "Bool-🦾": Bool,
-    "String-🦾": String,
-    "If ANY return A else B-🦾": IfExecute,
-    "DebugPrint-🦾": DebugPrint,
+    "Compare-beyond_nodes": Compare,
+    "Int-beyond_nodes": Int,
+    "Float-beyond_nodes": Float,
+    "Bool-beyond_nodes": Bool,
+    "String-beyond_nodes": String,
+    "If ANY return A else B-beyond_nodes": IfExecute,
+    "DebugPrint-beyond_nodes": DebugPrint,
     # "If ANY execute A else B-🦾": IfExecuteNode,
-    "TwoWaySwitch-🦾": TwoWaySwitch,
+    "TwoWaySwitch-beyond_nodes": TwoWaySwitch,
     
     # Masking Nodes
-    "MaskRectArea-🦾": Mask_Rectangular_Area,
+    "MaskRectArea-beyond_nodes": Mask_Rectangular_Area,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
