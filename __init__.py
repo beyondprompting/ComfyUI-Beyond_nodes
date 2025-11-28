@@ -29,7 +29,7 @@ NODE_CLASS_MAPPINGS = {
     "ImageColorSampler": ImageColorSampler,
     
     # V4 nodes
-    "Compositor4_beyond": Compositor4,
+    "Compositor4": Compositor4,
     "CompositorConfig4": CompositorConfig4,
     "Compositor4TransformsOut": Compositor4TransformsOut,
     "Compositor4MasksOutput": Compositor4MasksOutput,
