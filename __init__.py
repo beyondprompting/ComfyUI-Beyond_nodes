@@ -29,7 +29,7 @@ NODE_CLASS_MAPPINGS = {
     "ImageColorSampler": ImageColorSampler,
     
     # V4 nodes
-    "Compositor4": Compositor4,
+    "Compositor4_beyond": Compositor4,
     "CompositorConfig4": CompositorConfig4,
     "Compositor4TransformsOut": Compositor4TransformsOut,
     "Compositor4MasksOutput": Compositor4MasksOutput,
@@ -54,7 +54,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Compositor4MasksOutput": "💜 Compositor Masks Output V4",
 }
 
-EXTENSION_NAME = "Enrico"
+EXTENSION_NAME = "Beyond Nodes"
 
 WEB_DIRECTORY = "./web"
 
