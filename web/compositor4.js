@@ -3,7 +3,7 @@ import { api } from "../../scripts/api.js";
 import { fabric } from "./fabric.js";
 
 // Constants
-const COMPOSITOR_4 = "Compositor-beyond_nodes";
+const COMPOSITOR_4 = "Compositor4-beyond_nodes";
 const CANVAS_BORDER_COLOR = "#00b300b0";
 const COMPOSITION_BORDER_COLOR = "#00b300b0";
 const COMPOSITION_BORDER_SIZE = 2;
