@@ -20,7 +20,7 @@ from .Compositor4MasksOutput import Compositor4MasksOutput
 # Author : theUpsiders 
 from .Logic import Compare, Int, Float, Bool, String, IfExecute, DebugPrint, AlwaysEqualProxy
 
-from .Masking import Mask_Rect_Area_Advanced
+from .Masking import Mask_Rectangular_Area
 
 # V1-style registration (kept for backward compatibility)
 # V3 nodes also have comfy_entrypoint() for modern registration
@@ -51,7 +51,7 @@ NODE_CLASS_MAPPINGS = {
     # "If ANY execute A else B-🔬": IfExecuteNode,
     
     # Masking Nodes
-    "MaskRectAreaAdvanced-🦾": Mask_Rect_Area_Advanced,
+    "MaskRectArea-🦾": Mask_Rectangular_Area,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -81,7 +81,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # "If ANY execute A else B-🔬": "If ANY execute A else B",
 
     # Masking Nodes
-    "MaskRectAreaAdvanced-🦾": "Mask Rectanguar Area Advanced"
+    "MaskRectArea-🦾": "Mask Rectanguar Area Advanced"
 
 }
 
