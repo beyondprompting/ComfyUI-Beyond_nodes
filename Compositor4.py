@@ -147,7 +147,7 @@ class Compositor4(io.ComfyNode):
                 io.String.Output(display_name="fabricData_output", tooltip="Compositor state data (transforms, positions, etc.)"),
                 io.String.Output(display_name="imageName_output", tooltip="Filename of the saved composition snapshot"),
                 # io.String.Output(display_name="transforms", tooltip="JSON transform data for Compositor4TransformsOut node"),
-                # io.Custom("COMPOSITOR_OUTPUT_MASKS").Output(display_name="layer_outputs", tooltip="Layer outputs (images and masks) for Compositor4MasksOutput node"),
+                io.Custom("COMPOSITOR_OUTPUT_MASKS").Output(display_name="layer_outputs", tooltip="Layer outputs (images and masks) for Compositor4MasksOutput node"),
             ],
             hidden=[
                 io.Hidden.extra_pnginfo,
