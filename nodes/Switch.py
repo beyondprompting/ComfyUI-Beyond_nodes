@@ -1,4 +1,4 @@
-from .common import BOOLEAN, STRING, CATEGORY, any
+from .common.types import BOOLEAN, STRING, CATEGORY, any
 
 
 class CSwitchFromAny:
@@ -14,7 +14,9 @@ class CSwitchFromAny:
             }
         }
 
-    CATEGORY = CATEGORY.MAIN.value + CATEGORY.SWITCH.value
+    CATEGORY = "Beyond Nodes/Switching"
+    # CATEGORY = CATEGORY.MAIN.value + CATEGORY.SWITCH.value
+    
     RETURN_TYPES = (any, any,)
     RETURN_NAMES = ("on_true", "on_false",)
 

@@ -1,101 +1,15 @@
-# author: beyondprompting@gmail.com
-# Logic Nodes
-# Fork from Enricos Nodes
-# from .Compositor3 import Compositor3
-# from .CompositorConfig3 import CompositorConfig3
-# from .CompositorTools3 import CompositorTools3
+"""
+@author: Beyond Prompting
+@title: Beyond Nodes
+@nickname: Beyond Nodes
+@description: Beyond Node Packages
+"""
 
-# from .CompositorTransformsOut3 import CompositorTransformsOutV3
-# from .CompositorMasksOutputV3 import CompositorMasksOutputV3
-# from .CompositorColorPicker import CompositorColorPicker
-# from .ImageColorSampler import ImageColorSampler
+from .node_mappings import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
 
-# V4 nodes - new compositor with integrated mask handling
-from .Compositor4 import Compositor4
-from .CompositorConfig4 import CompositorConfig4
-from .Compositor4TransformsOut import Compositor4TransformsOut
-from .Compositor4MasksOutput import Compositor4MasksOutput
-
-# Logic Nodes
-# Author : theUpsiders 
-from .Logic import Compare, Int, Float, Bool, String, IfExecute, DebugPrint, AlwaysEqualProxy, TwoWaySwitch
-
-from .Masking import Mask_Rectangular_Area
-
-from .Switch import CSwitchBooleanAny
-
-# V1-style registration (kept for backward compatibility)
-# V3 nodes also have comfy_entrypoint() for modern registration
-NODE_CLASS_MAPPINGS = {
-    # "Compositor3-🦾": Compositor3,
-    # "CompositorConfig3-🦾": CompositorConfig3,
-    # "CompositorTools3-🦾": CompositorTools3,
-    # "CompositorTransformsOutV3-🦾": CompositorTransformsOutV3,
-    # "CompositorMasksOutputV3-🦾": CompositorMasksOutputV3,
-    # Utilities 
-    # "CompositorColorPicker-🦾": CompositorColorPicker,
-    # "ImageColorSampler-🦾": ImageColorSampler,
-    
-    # V4 nodes
-    "Compositor4-beyond_nodes": Compositor4,
-    "CompositorConfig4-beyond_nodes": CompositorConfig4,
-    "Compositor4TransformsOut-beyond_nodes": Compositor4TransformsOut,
-    "Compositor4MasksOutput-beyond_nodes": Compositor4MasksOutput,
-
-    # Logic Nodes
-    "Compare-beyond_nodes": Compare,
-    "Int-beyond_nodes": Int,
-    "Float-beyond_nodes": Float,
-    "Bool-beyond_nodes": Bool,
-    "String-beyond_nodes": String,
-    "If ANY return A else B-beyond_nodes": IfExecute,
-    "DebugPrint-beyond_nodes": DebugPrint,
-    # "If ANY execute A else B-🦾": IfExecuteNode,
-    "TwoWaySwitch-beyond_nodes": TwoWaySwitch,
-    
-    # Masking Nodes
-    "MaskRectArea-beyond_nodes": Mask_Rectangular_Area,
-    "BooleanSwitch-beyond_nodes": CSwitchBooleanAny
-}
-
-NODE_DISPLAY_NAME_MAPPINGS = {
-    # "Compositor3": "💜 Compositor (V3)",
-    # "CompositorConfig3": "💜 Compositor Config (V3)",
-    # "CompositorTools3": "💜 Compositor Tools (V3)",
-    # "CompositorTransformsOutV3": "💜 Compositor Transforms Output (V3)",
-    # "CompositorMasksOutputV3": "💜 Compositor Masks Output (V3)",
-    # Utilities
-    # "CompositorColorPicker": "💜 Compositor Color Picker",
-    # "ImageColorSampler": "💜 Image Color Sampler",
-    
-    # V4 nodes
-    "Compositor4-beyond_nodes": "🦾 Compositor V4 ",
-    "CompositorConfig4-beyond_nodes": "🦾 Compositor Config V4 🦾",
-    "Compositor4TransformsOut-beyond_nodes": "🦾 Compositor Transforms Output V4 🦾",
-    "Compositor4MasksOutput-beyond_nodes": "🦾 Compositor Masks Output V4 🦾",
-
-    # Logic Nodes
-    "Compare-🦾": "Compare 🦾",
-    "Int-🦾": "Int 🦾",
-    "Float-🦾": "Float 🦾",
-    "Bool-🦾": "Bool 🦾",
-    "String-🦾": "String 🦾",
-    "If ANY return A else B-🦾": "If ANY return A else B",
-    "DebugPrint-🦾": "DebugPrint",
-    # "If ANY execute A else B-🦾": "If ANY execute A else B",
-
-    # Masking Nodes
-    "MaskRectArea-🦾": "Mask Rectangular Area",
-
-    #Switch
-    "TwoWaySwitch-🦾": "Two Way Switch 🦾",
-    "BooleanSwitch-beyond_nodes": "Boolean Switch Any Type",
-
-}
-
-EXTENSION_NAME = "Beyond Nodes"
-
-WEB_DIRECTORY = "./web"
-
-# Additional web resources to ensure they're loaded
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
+print("------------------------------------------")    
+print("\033[34mBeyond Nodes Studio v0.1 : \033[92m 175 Nodes Loaded\033[0m")
+print("------------------------------------------") 
+print("** ") 
+print("** ") 
+print("------------------------------------------") 
