@@ -19,7 +19,7 @@ except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Masking nodes\033[0m")
 
 try:
-    from .nodes.Switch import TwoWaySwitch, CSwitchBooleanAny, CSwitchFromAny
+    from .nodes.Switch import TwoWaySwitch, CSwitchBooleanAny, CSwitchFromAny, ImageMaskSwitch
     
 except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Switch nodes\033[0m")
@@ -44,7 +44,7 @@ NODE_CLASS_MAPPINGS = {
     ### Switch Nodes 
     "TwoWaySwitch-beyond_nodes": TwoWaySwitch,
     "BooleanSwitch-beyond_nodes": CSwitchBooleanAny,
-    "Test_Beyond": CSwitchFromAny,
+    "ImageMaskSwitch-beyond_nodes": ImageMaskSwitch,
     
 }
 
@@ -60,12 +60,12 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Float-beyond_nodes": "Float 🦾",
     "Bool-beyond_nodes": "Bool 🦾",
     "String-beyond_nodes": "String 🦾",
-    "If ANY return A else B-beyond_nodes": "If ANY return A else B",
-    "DebugPrint-beyond_nodes": "DebugPrint",
+    "If ANY return A else B-beyond_nodes": "If ANY return A else B 🦾",
+    "DebugPrint-beyond_nodes": "DebugPrint 🦾",
     ### Masking Nodes
-    "MaskRectArea-beyond_nodes": "Mask Rectangular Area",
+    "MaskRectArea-beyond_nodes": "Mask Rectangular Area 🦾",
     ### Switch Nodes 
     "TwoWaySwitch-beyond_nodes": "Two Way Switch 🦾",
-    "BooleanSwitch-beyond_nodes": "Boolean Switch Any Type",
-    "Test_Beyond":"Test Beyond",
+    "BooleanSwitch-beyond_nodes": "Boolean Switch Any Type 🦾",
+    "ImageMaskSwitch-beyond_nodes":"Image and Mask Switch 🦾"
 }
