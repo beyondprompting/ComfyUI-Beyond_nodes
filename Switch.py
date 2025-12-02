@@ -1,5 +1,4 @@
-from .common.types import * 
-from .common.logger import *
+from .common import BOOLEAN, STRING, CATEGORY, any
 
 
 class CSwitchFromAny:
@@ -43,7 +42,7 @@ class CSwitchBooleanAny:
             }
         }
 
-    CATEGORY = "Beyond Nodes/Logic"
+    CATEGORY = "Beyond Nodes/Switching"
     # CATEGORY = CATEGORY.MAIN.value + CATEGORY.SWITCH.value
     
     RETURN_TYPES = (any,)
