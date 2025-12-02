@@ -19,8 +19,7 @@ except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Masking nodes\033[0m")
 
 try:
-    from .nodes.Logic import TwoWaySwitch
-    from .nodes.Logic import CSwitchBooleanAny
+    from .nodes.Switch import TwoWaySwitch, CSwitchBooleanAny
     
 except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Switch nodes\033[0m")
