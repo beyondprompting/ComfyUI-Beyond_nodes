@@ -1,6 +1,5 @@
 from ..common import BOOLEAN, STRING, CATEGORY, any, logger
 
-
 class CSwitchFromAny:
     def __init__(self):
         pass
@@ -44,7 +43,7 @@ class CSwitchBooleanAny:
             }
         }
 
-    CATEGORY = "Beyond Nodes/Switching"
+    CATEGORY = "Beyond Nodes/Logic"
     # CATEGORY = CATEGORY.MAIN.value + CATEGORY.SWITCH.value
     
     RETURN_TYPES = (any,)
@@ -81,12 +80,12 @@ class TwoWaySwitch:
                 "selection_setting": ("INT", {"default": 1, "min": 1, "max": 2}),
             },
             "optional": {
-                "input_1": (any_type,),
-                "input_2": (any_type,),
+                "input_1": (any,),
+                "input_2": (any,),
             }
         }
 
-    RETURN_TYPES = (any_type,)
+    RETURN_TYPES = (any,)
     RETURN_NAMES = ("output",)
     FUNCTION = "switch_inputs"
     
