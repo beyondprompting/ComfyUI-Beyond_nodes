@@ -89,7 +89,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
 
     #Switch
     "TwoWaySwitch-🦾": "Two Way Switch 🦾",
-    "BooleanSwitch-🦾": "Boolean Switch Any Type",
+    "BooleanSwitch-Beyond_nodes": "Boolean Switch Any Type",
 
 }
 
