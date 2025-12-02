@@ -22,7 +22,7 @@ from .Logic import Compare, Int, Float, Bool, String, IfExecute, DebugPrint, Alw
 
 from .Masking import Mask_Rectangular_Area
 
-from Switch import CSwitchBooleanAny
+from .Switch import CSwitchBooleanAny
 
 # V1-style registration (kept for backward compatibility)
 # V3 nodes also have comfy_entrypoint() for modern registration
