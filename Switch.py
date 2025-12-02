@@ -43,7 +43,7 @@ class CSwitchBooleanAny:
             }
         }
 
-    CATEGORY = "Beyond Nodes/Switching"
+    CATEGORY = "Beyond Nodes/Logic"
     # CATEGORY = CATEGORY.MAIN.value + CATEGORY.SWITCH.value
     
     RETURN_TYPES = (any,)
