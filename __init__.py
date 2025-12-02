@@ -22,6 +22,8 @@ from .Logic import Compare, Int, Float, Bool, String, IfExecute, DebugPrint, Alw
 
 from .Masking import Mask_Rectangular_Area
 
+from Switch import CSwitchBooleanAny
+
 # V1-style registration (kept for backward compatibility)
 # V3 nodes also have comfy_entrypoint() for modern registration
 NODE_CLASS_MAPPINGS = {
@@ -53,6 +55,7 @@ NODE_CLASS_MAPPINGS = {
     
     # Masking Nodes
     "MaskRectArea-beyond_nodes": Mask_Rectangular_Area,
+    "BooleanSwitch-beyond_nodes": CSwitchBooleanAny
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -83,7 +86,9 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "TwoWaySwitch-🦾": "Two Way Switch 🦾",
 
     # Masking Nodes
-    "MaskRectArea-🦾": "Mask Rectangular Area"
+    "MaskRectArea-🦾": "Mask Rectangular Area",
+
+    "BooleanSwitch-🦾": "Boolean Switch Any Type"
 
 }
 
