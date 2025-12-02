@@ -63,6 +63,14 @@ class CSwitchBooleanAny:
         else:
             return (on_false,)
 
+class AnyType(str):
+    """A special string subclass that equals any other type for ComfyUI type checking."""
+    def __ne__(self, __value: object) -> bool:
+        return False
+
+# Create an instance to use as the any type
+any_type = AnyType("*")
+
 class TwoWaySwitch:
     """Two-way switch that selects between two inputs based on selection setting."""
     
@@ -104,4 +112,3 @@ class TwoWaySwitch:
             selected_output = input_1 if input_1 is not None else input_2
         
         return (selected_output,)
-

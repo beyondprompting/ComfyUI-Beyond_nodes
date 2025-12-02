@@ -229,18 +229,9 @@ class DebugPrint:
         print(ANY)
         return {}
 
-class AnyType(str):
-    """A special string subclass that equals any other type for ComfyUI type checking."""
-    def __ne__(self, __value: object) -> bool:
-        return False
-
-# Create an instance to use as the any type
-any_type = AnyType("*")
-
 from ..common.types import BOOLEAN, STRING, CATEGORY, any
 
-
-class CSwitchFromAny:
+class CSwitchBooleanAny:
     def __init__(self):
         pass
 
@@ -248,23 +239,27 @@ class CSwitchFromAny:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "any": (any, ),
+                "on_true": (any, {"lazy": True}),
+                "on_false": (any, {"lazy": True}),
                 "boolean": BOOLEAN,
             }
         }
 
-    CATEGORY = "Beyond Nodes/Logic"
+    CATEGORY = "Beyond Nodes/Switching"
     # CATEGORY = CATEGORY.MAIN.value + CATEGORY.SWITCH.value
-
-    RETURN_TYPES = (any, any,)
-    RETURN_NAMES = ("on_true", "on_false",)
+    
+    RETURN_TYPES = (any,)
 
     FUNCTION = "execute"
 
-    def execute(self, any,boolean=True):
+    def check_lazy_status(self, on_true=None, on_false=None, boolean=True):
+        needed = "on_true" if boolean else "on_false"
+        return [needed]
+
+    def execute(self, on_true, on_false, boolean=True):
         logger.debug("Any switch: " + str(boolean))
 
         if boolean:
-            return any, None
+            return (on_true,)
         else:
-            return None, any
+            return (on_false,)
