@@ -41,7 +41,6 @@ NODE_CLASS_MAPPINGS = {
     "String-beyond_nodes": String,
     "If ANY return A else B-beyond_nodes": IfExecute,
     "DebugPrint-beyond_nodes": DebugPrint,
-    "If ANY execute A else B-beyond_nodes": IfExecuteNode,
     ### Masking Nodes
     "MaskRectArea-beyond_nodes": Mask_Rectangular_Area,
     ### Switch Nodes 
@@ -64,7 +63,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "String-beyond_nodes": "String 🦾",
     "If ANY return A else B-beyond_nodes": "If ANY return A else B",
     "DebugPrint-beyond_nodes": "DebugPrint",
-    "If ANY execute A else B-beyond_nodes": "If ANY execute A else B",
     ### Masking Nodes
     "MaskRectArea-beyond_nodes": "Mask Rectangular Area",
     ### Switch Nodes 
