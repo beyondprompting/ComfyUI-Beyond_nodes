@@ -141,3 +141,31 @@ class ImageMaskSwitch:
             return images3_opt, mask3_opt,
         else:
             return images4_opt, mask4_opt,
+
+class BooleanControlOutput:
+    """
+    This node will output different values based on a boolean input
+    """
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {
+            "boolean_input": ("BOOLEAN", {"default": True, "label_on": "True", "label_off": "False"}),
+            "true_text": ("STRING", {"multiline": True, "defaultBehavior": "input"}),
+            "true_float": ("FLOAT", {"default": 1, "step": 0.05}),  
+            "true_int": ("INT", {"default": 1, "step": 1}),
+            "false_text": ("STRING", {"multiline": True, "defaultBehavior": "input"}),
+            "false_float": ("FLOAT", {"default": 0, "step": 0.1}),  
+            "false_int": ("INT", {"default": 0, "step": 1}),
+        }}
+
+    RETURN_TYPES = ("STRING", "FLOAT", "INT", "BOOLEAN", "BOOLEAN")
+    RETURN_NAMES = ("text", "float", "int", "is_true", "is_false")
+    FUNCTION = "fun"
+    CATEGORY = "Beyond nodes/Switch"
+
+    @staticmethod
+    def fun(boolean_input, true_text, true_float, true_int, false_text, false_float, false_int):
+        if boolean_input:
+            return (true_text, true_float, true_int, True, False)
+        else:
+            return (false_text, false_float, false_int, False, True)

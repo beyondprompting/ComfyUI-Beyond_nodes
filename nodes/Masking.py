@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 from PIL import Image
-from ..common.imageFunctions import tensor2pil, pil2tensor, image2mask
+from ..common.imageFunctions import tensor2pil, pil2tensor, image2mask, fit_resize_image
 from ..common import any
 
 
@@ -141,3 +141,50 @@ class ImageMaskScaleAs:
         else:
             # log(f"Error: {NODE_NAME} skipped, because the available image or mask is not found.", message_type='error')
             return (None, None, [orig_width, orig_height], 0, 0,)
+
+class MaskToImage:
+    """Converts a mask (alpha) to an RGB image with a color and background"""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "mask": ("MASK",),
+                "color": ("COLOR",),
+                "background": ("COLOR", {"default": "#000000"}),
+            },
+            "optional": {
+                "invert": ("BOOLEAN", {"default": False}),
+            },
+        }
+
+    CATEGORY = "mtb/generate"
+
+    RETURN_TYPES = ("IMAGE",)
+
+    FUNCTION = "render_mask"
+
+    def render_mask(self, mask, color, background, invert=False):
+        masks = tensor2pil(1.0 - mask) if invert else tensor2pil(mask)
+        images = []
+
+        for m in masks:
+            _mask = m.convert("L")
+
+            # log.debug(
+            #     f"Converted mask to PIL Image format, size: {_mask.size}"
+            # )
+
+            image = Image.new("RGBA", _mask.size, color=color)
+            # apply the mask
+            image = Image.composite(
+                image, Image.new("RGBA", _mask.size, color=background), _mask
+            )
+
+            # image = ImageChops.multiply(image, mask)
+            # apply over background
+            # image = Image.alpha_composite(Image.new("RGBA", image.size, color=background), image)
+
+            images.append(image.convert("RGB"))
+
+        return (pil2tensor(images),)

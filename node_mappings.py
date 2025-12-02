@@ -13,14 +13,14 @@ except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Logic nodes\033[0m")
 
 try:
-    from .nodes.Masking import Mask_Rectangular_Area, ImageMaskScaleAs
+    from .nodes.Masking import Mask_Rectangular_Area, ImageMaskScaleAs, MaskToImage
     
 except ImportError as e:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Masking nodes\033[0m")
     print(e)
 
 try:
-    from .nodes.Switch import TwoWaySwitch, CSwitchBooleanAny, CSwitchFromAny, ImageMaskSwitch
+    from .nodes.Switch import TwoWaySwitch, CSwitchBooleanAny, CSwitchFromAny, ImageMaskSwitch, BooleanControlOutput
     
 except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Switch nodes\033[0m")
@@ -47,6 +47,8 @@ NODE_CLASS_MAPPINGS = {
     "BooleanSwitch-beyond_nodes": CSwitchBooleanAny,
     "ImageMaskSwitch-beyond_nodes": ImageMaskSwitch,
     "ImageMaskScaleAs-beyond_nodes": ImageMaskScaleAs,
+    "BooleanControlOutput-beyond_nodes": BooleanControlOutput,
+    "MaskToImage-beyond_nodes": MaskToImage,
     
 }
 
@@ -71,5 +73,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "BooleanSwitch-beyond_nodes": "Boolean Switch Any Type 🦾",
     "ImageMaskSwitch-beyond_nodes":"Image and Mask Switch 🦾",
     "ImageMaskScaleAs-beyond_nodes": "Scale an Image/Mask as a Ref 🦾",
+    "BooleanControlOutput-beyond_nodes": "Boolean Control Output 🦾",
+    "MaskToImage-beyond_nodes": "Mask to Image 🦾",
     
 }
