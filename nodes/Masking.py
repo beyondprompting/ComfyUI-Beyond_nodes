@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from PIL import Image
 from ..common.imageFunctions import tensor2pil, pil2tensor, image2mask
-from ..common.types import any
+from ..common import any
 
 
 # MASK RECT AREA ADVANCED
