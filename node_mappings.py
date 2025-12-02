@@ -15,8 +15,9 @@ except ImportError:
 try:
     from .nodes.Masking import Mask_Rectangular_Area, ImageMaskScaleAs
     
-except ImportError:
+except ImportError as e:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Masking nodes\033[0m")
+    print(e)
 
 try:
     from .nodes.Switch import TwoWaySwitch, CSwitchBooleanAny, CSwitchFromAny, ImageMaskSwitch

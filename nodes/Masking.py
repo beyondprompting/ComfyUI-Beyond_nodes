@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+from PIL import Image
 from ..common.imageFunctions import tensor2pil, pil2tensor, image2mask
 
 
