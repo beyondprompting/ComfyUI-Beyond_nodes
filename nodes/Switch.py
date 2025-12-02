@@ -1,7 +1,10 @@
-from ..common.types import BOOLEAN, STRING, CATEGORY, any
+from ..common import BOOLEAN, STRING, CATEGORY, any, logger
 
 
 class CSwitchFromAny:
+    def __init__(self):
+        pass
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -28,6 +31,9 @@ class CSwitchFromAny:
             return None, any
 
 class CSwitchBooleanAny:
+    def __init__(self):
+        pass
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
