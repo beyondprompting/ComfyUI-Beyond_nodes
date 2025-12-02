@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from PIL import Image
 from ..common.imageFunctions import tensor2pil, pil2tensor, image2mask
+from ..common.types import any
 
 
 # MASK RECT AREA ADVANCED
@@ -26,7 +27,7 @@ class Mask_Rectangular_Area:
             "hidden": {"extra_pnginfo": "EXTRA_PNGINFO", "unique_id": "UNIQUE_ID"}
         }
 
-    CATEGORY = "Image/Masking"
+    CATEGORY = "Beyond nodes/Masking"
 
     RETURN_TYPES = ("MASK",)
     RETURN_NAMES = ("MASKS",)
@@ -55,11 +56,6 @@ class Mask_Rectangular_Area:
         # Return the mask as a tensor with an additional channel
         return (mask.unsqueeze(0),)
 
-from .imagefunc import *
-
-NODE_NAME = 'ImageMaskScaleAs'
-
-any = AnyType("*")
 
 class ImageMaskScaleAs:
 
@@ -87,11 +83,12 @@ class ImageMaskScaleAs:
     RETURN_TYPES = ("IMAGE", "MASK", "BOX", "INT", "INT")
     RETURN_NAMES = ("image", "mask", "original_size", "widht", "height",)
     FUNCTION = 'image_mask_scale_as'
-    CATEGORY = '😺dzNodes/LayerUtility'
+    CATEGORY = 'Beyond nodes/Masking'
 
     def image_mask_scale_as(self, scale_as, fit, method,
                             image=None, mask = None,
                             ):
+        NODE_NAME = 'ImageMaskScaleAs'
         if scale_as.shape[0] > 0:
             _asimage = tensor2pil(scale_as[0])
         else:
