@@ -1,18 +1,3 @@
-
-from .Compositor4 import Compositor4
-from .CompositorConfig4 import CompositorConfig4
-from .Compositor4TransformsOut import Compositor4TransformsOut
-from .Compositor4MasksOutput import Compositor4MasksOutput
-
-# Logic Nodes
-# Author : theUpsiders 
-from .Logic import Compare, Int, Float, Bool, String, IfExecute, DebugPrint, AlwaysEqualProxy, TwoWaySwitch
-
-from .Masking import Mask_Rectangular_Area
-
-from .Switch import CSwitchBooleanAny
-
-
 try:
     from .nodes.Compositor4 import *
     from .nodes.Compositor4 import Compositor4
