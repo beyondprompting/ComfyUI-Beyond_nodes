@@ -1,5 +1,4 @@
 try:
-    from .nodes.Compositor4 import *
     from .nodes.Compositor4 import Compositor4
     from .nodes.CompositorConfig4 import CompositorConfig4
     from .nodes.Compositor4TransformsOut import Compositor4TransformsOut
