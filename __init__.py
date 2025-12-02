@@ -83,12 +83,13 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "If ANY return A else B-🦾": "If ANY return A else B",
     "DebugPrint-🦾": "DebugPrint",
     # "If ANY execute A else B-🦾": "If ANY execute A else B",
-    "TwoWaySwitch-🦾": "Two Way Switch 🦾",
 
     # Masking Nodes
     "MaskRectArea-🦾": "Mask Rectangular Area",
 
-    "BooleanSwitch-🦾": "Boolean Switch Any Type"
+    #Switch
+    "TwoWaySwitch-🦾": "Two Way Switch 🦾",
+    "BooleanSwitch-🦾": "Boolean Switch Any Type",
 
 }
 
