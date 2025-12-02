@@ -236,3 +236,35 @@ class AnyType(str):
 
 # Create an instance to use as the any type
 any_type = AnyType("*")
+
+from ..common.types import BOOLEAN, STRING, CATEGORY, any
+
+
+class CSwitchFromAny:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "any": (any, ),
+                "boolean": BOOLEAN,
+            }
+        }
+
+    CATEGORY = "Beyond Nodes/Logic"
+    # CATEGORY = CATEGORY.MAIN.value + CATEGORY.SWITCH.value
+
+    RETURN_TYPES = (any, any,)
+    RETURN_NAMES = ("on_true", "on_false",)
+
+    FUNCTION = "execute"
+
+    def execute(self, any,boolean=True):
+        logger.debug("Any switch: " + str(boolean))
+
+        if boolean:
+            return any, None
+        else:
+            return None, any
