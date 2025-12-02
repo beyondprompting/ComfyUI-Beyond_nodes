@@ -19,7 +19,7 @@ except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Masking nodes\033[0m")
 
 try:
-    from .nodes.Switch import TwoWaySwitch, CSwitchBooleanAny
+    from .nodes.Switch import TwoWaySwitch, CSwitchBooleanAny, CSwitchFromAny
     
 except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Switch nodes\033[0m")
@@ -43,7 +43,8 @@ NODE_CLASS_MAPPINGS = {
     "MaskRectArea-beyond_nodes": Mask_Rectangular_Area,
     ### Switch Nodes 
     "TwoWaySwitch-beyond_nodes": TwoWaySwitch,
-    "BooleanSwitch-beyond_nodes": CSwitchBooleanAny
+    "BooleanSwitch-beyond_nodes": CSwitchBooleanAny,
+    "Test_Beyond": CSwitchFromAny,
     
 }
 
@@ -66,4 +67,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     ### Switch Nodes 
     "TwoWaySwitch-beyond_nodes": "Two Way Switch 🦾",
     "BooleanSwitch-beyond_nodes": "Boolean Switch Any Type",
+    "Test_Beyond":"Test Beyond",
 }
