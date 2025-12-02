@@ -1,4 +1,4 @@
-from .common import BOOLEAN, STRING, CATEGORY, any, logger
+from common import BOOLEAN, STRING, CATEGORY, any, logger
 
 
 class CSwitchFromAny:
