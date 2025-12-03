@@ -13,7 +13,7 @@ except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Logic nodes\033[0m")
 
 try:
-    from .nodes.Masking import Mask_Rectangular_Area, ImageMaskScaleAs, MaskToImage
+    from .nodes.Masking import Mask_Rectangular_Area, ImageMaskScaleAs, MaskToImage, MaskBoundingBox
     
 except ImportError as e:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Masking nodes\033[0m")
@@ -42,13 +42,14 @@ NODE_CLASS_MAPPINGS = {
     "DebugPrint-beyond_nodes": DebugPrint,
     ### Masking Nodes
     "MaskRectArea-beyond_nodes": Mask_Rectangular_Area,
+    "MaskToImage-beyond_nodes": MaskToImage,
+    "MaskBoundingBox-beyond_nodes": MaskBoundingBox,
+    "ImageMaskScaleAs-beyond_nodes": ImageMaskScaleAs,
     ### Switch Nodes 
     "TwoWaySwitch-beyond_nodes": TwoWaySwitch,
     "BooleanSwitch-beyond_nodes": CSwitchBooleanAny,
     "ImageMaskSwitch-beyond_nodes": ImageMaskSwitch,
-    "ImageMaskScaleAs-beyond_nodes": ImageMaskScaleAs,
     "BooleanControlOutput-beyond_nodes": BooleanControlOutput,
-    "MaskToImage-beyond_nodes": MaskToImage,
     
 }
 
@@ -68,12 +69,13 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "DebugPrint-beyond_nodes": "DebugPrint 🦾",
     ### Masking Nodes
     "MaskRectArea-beyond_nodes": "Mask Rectangular Area 🦾",
+    "MaskToImage-beyond_nodes": "Mask to Image 🦾",
+    "MaskBoundingBox": "Mask Bounding Box 🦾",
+    "ImageMaskScaleAs-beyond_nodes": "Scale an Image/Mask as a Ref 🦾",
     ### Switch Nodes 
     "TwoWaySwitch-beyond_nodes": "Two Way Switch 🦾",
     "BooleanSwitch-beyond_nodes": "Boolean Switch Any Type 🦾",
     "ImageMaskSwitch-beyond_nodes":"Image and Mask Switch 🦾",
-    "ImageMaskScaleAs-beyond_nodes": "Scale an Image/Mask as a Ref 🦾",
     "BooleanControlOutput-beyond_nodes": "Boolean Control Output 🦾",
-    "MaskToImage-beyond_nodes": "Mask to Image 🦾",
     
 }
