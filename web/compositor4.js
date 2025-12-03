@@ -3,7 +3,7 @@ import { api } from "../../scripts/api.js";
 import { fabric } from "./fabric.js";
 
 // Constants
-const COMPOSITOR_4 = "Compositor4-beyond_nodes";
+const COMPOSITOR_4 = "Compositor4";
 const CANVAS_BORDER_COLOR = "#00b300b0";
 const COMPOSITION_BORDER_COLOR = "#00b300b0";
 const COMPOSITION_BORDER_SIZE = 2;
@@ -42,7 +42,7 @@ const BUTTON_FONT_SIZE = "12px";
 const ICON_FONT_SIZE = "14px";
 
 app.registerExtension({
-  name: "Comfy.Compositor4-beyond_nodes",
+  name: "Comfy.Compositor4",
 
   async setup(app) {
     api.addEventListener("compositor4_init", executedMessageHandler);
