@@ -53,6 +53,7 @@ app.registerExtension({
     // At this point, widget values are NOT yet available (they're populated later)
     print(node.constructor.comfyClass)
     if (isCorrectType(node)) {
+      debugger
       initializeCustomCanvasWidget(node);
     }
   },

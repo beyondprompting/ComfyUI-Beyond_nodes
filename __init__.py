@@ -13,3 +13,10 @@ print("------------------------------------------")
 print("** ") 
 print("** ") 
 print("------------------------------------------") 
+
+EXTENSION_NAME = "Beyond Nodes Packages"
+
+WEB_DIRECTORY = "./web"
+
+# Additional web resources to ensure they're loaded
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
