@@ -1,9 +1,13 @@
 import torch
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageSequence, ImageOps
+import os
+import folder_paths
 import comfy.utils
+import node_helpers
+import hashlib
 import torchvision.transforms.v2 as T
-from ..common.imageFunctions import tensor2pil, pil2tensor, image2mask, fit_resize_image
+from ..common.imageFunctions import tensor2pil, pil2tensor, image2mask, fit_resize_image, tensor_to_hash, create_temp_file
 from ..common import any
 
 
@@ -244,3 +248,119 @@ class MaskBoundingBox:
         image_optional = image_optional[:, y1:y2, x1:x2, :]
 
         return (mask, image_optional, x1, y1, x2 - x1, y2 - y1)
+
+class EditMask:
+
+    def __init__(self):
+        self.image_id = None
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required":
+                    {"image": ("IMAGE",), # 表示一个张量
+                     
+                     },
+
+                    "optional":{
+                            "image_update": ("IMAGE_FILE",)
+                        },
+                   
+                }
+
+    CATEGORY = "Beyond nodes/Masking"
+
+    RETURN_TYPES = ("IMAGE", "MASK")
+    RETURN_NAMES = ("image", "mask")
+
+    FUNCTION = "edit"
+
+    OUTPUT_NODE = True
+
+    def edit(self, image,image_update=None):
+
+        # 根据image输入来判断是否是新的图片
+        if self.image_id==None:
+            self.image_id=tensor_to_hash(image)
+            image_update=None
+        else:
+            image_id=tensor_to_hash(image)
+            if image_id!=self.image_id:
+                image_update=None
+                self.image_id=image_id
+
+
+        image_path=None
+        # print('#image_update',self.image_id,image_update)
+        if image_update==None:
+            print('--')
+        else:
+            if 'images' in image_update:
+                images=image_update['images']
+                filename=images[0]['filename']
+                subfolder=images[0]['subfolder']
+                type=images[0]['type']
+                name, base_dir=folder_paths.annotated_filepath(filename)
+                if type.endswith("output"):
+                    base_dir = folder_paths.get_output_directory() 
+                elif type.endswith("input"):
+                    base_dir = folder_paths.get_input_directory() 
+                elif type.endswith("temp"):
+                    base_dir = folder_paths.get_temp_directory() 
+                #base_dir = folder_paths.get_input_directory()  
+                # print(base_dir,subfolder, name)
+                image_path = os.path.join(base_dir,subfolder, name)
+        
+        if image_path==None:
+            image_path,images=create_temp_file(image)
+
+        print('#image_path',os.path.exists(image_path),image_path)
+        # image_path = folder_paths.get_annotated_filepath(image) #文件名
+        
+        if not os.path.exists(image_path):
+            image_path,images=create_temp_file(image)
+
+
+        img = node_helpers.pillow(Image.open, image_path)
+        
+        output_images = []
+        output_masks = []
+        w, h = None, None
+
+        excluded_formats = ['MPO']
+        
+        for i in ImageSequence.Iterator(img):
+            i = node_helpers.pillow(ImageOps.exif_transpose, i)
+
+            if i.mode == 'I':
+                i = i.point(lambda i: i * (1 / 255))
+            image = i.convert("RGB")
+
+            if len(output_images) == 0:
+                w = image.size[0]
+                h = image.size[1]
+            
+            if image.size[0] != w or image.size[1] != h:
+                continue
+            
+            image = np.array(image).astype(np.float32) / 255.0
+            image = torch.from_numpy(image)[None,]
+            if 'A' in i.getbands():
+                mask = np.array(i.getchannel('A')).astype(np.float32) / 255.0
+                mask = 1. - torch.from_numpy(mask)
+            else:
+                # 尺寸不对，需要按照image来
+                mask = torch.zeros((h, w), dtype=torch.float32, device="cpu")
+
+            output_images.append(image)
+            output_masks.append(mask.unsqueeze(0))
+
+        if len(output_images) > 1 and img.format not in excluded_formats:
+            output_image = torch.cat(output_images, dim=0)
+            output_mask = torch.cat(output_masks, dim=0)
+        else:
+            output_image = output_images[0]
+            output_mask = output_masks[0]
+
+        return {"ui":{"images": images},"result": (output_image, output_mask)}
+
+        # return (output_image, output_mask)

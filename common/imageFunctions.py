@@ -1,4 +1,8 @@
+import os
+import folder_paths
+import hashlib
 import torch
+import numpy as np
 from PIL import Image
 
 def image2mask(image:Image) -> torch.Tensor:
@@ -41,3 +45,42 @@ def fit_resize_image(image:Image, target_width:int, target_height:int, fit:str, 
         else:
             ret_image = image.resize((target_width, target_height), resize_sampler)
     return  ret_image
+
+def tensor_to_hash(tensor):
+    # 将 Tensor 转换为 NumPy 数组
+    np_array = tensor.cpu().numpy()
+    
+    # 将 NumPy 数组转换为字节数据
+    byte_data = np_array.tobytes()
+    
+    # 计算哈希值
+    hash_value = hashlib.md5(byte_data).hexdigest()
+    
+    return hash_value
+
+
+def create_temp_file(image):
+    output_dir = folder_paths.get_temp_directory()
+
+    (
+            full_output_folder,
+            filename,
+            counter,
+            subfolder,
+            _,
+        ) = folder_paths.get_save_image_path('material', output_dir)
+
+    
+    image=tensor2pil(image)
+ 
+    image_file = f"{filename}_{counter:05}.png"
+     
+    image_path=os.path.join(full_output_folder, image_file)
+
+    image.save(image_path,compress_level=4)
+
+    return (image_path,[{
+    "filename": image_file,
+    "subfolder": subfolder,
+    "type": "temp"
+    }])
