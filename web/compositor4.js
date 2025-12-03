@@ -45,12 +45,13 @@ app.registerExtension({
   name: "Comfy.Compositor4-beyond_nodes",
 
   async setup(app) {
-    api.addEventListener("compositor4_init", executedMessageHandler);
+    api.addEventListener("compositor4-beyond_nodes_init", executedMessageHandler);
   },
 
   async nodeCreated(node) {
     // Initialize the basic editor UI structure when node is created
     // At this point, widget values are NOT yet available (they're populated later)
+    print(node.constructor.comfyClass)
     if (isCorrectType(node)) {
       initializeCustomCanvasWidget(node);
     }
