@@ -51,9 +51,7 @@ app.registerExtension({
   async nodeCreated(node) {
     // Initialize the basic editor UI structure when node is created
     // At this point, widget values are NOT yet available (they're populated later)
-    print(node.constructor.comfyClass)
     if (isCorrectType(node)) {
-      debugger
       initializeCustomCanvasWidget(node);
     }
   },
