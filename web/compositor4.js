@@ -45,7 +45,7 @@ app.registerExtension({
   name: "Comfy.Compositor4-beyond_nodes",
 
   async setup(app) {
-    api.addEventListener("compositor4-beyond_nodes_init", executedMessageHandler);
+    api.addEventListener("compositor4_init", executedMessageHandler);
   },
 
   async nodeCreated(node) {
