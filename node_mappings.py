@@ -13,7 +13,7 @@ except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Logic nodes\033[0m")
 
 try:
-    from .nodes.Masking import Mask_Rectangular_Area, ImageMaskScaleAs, MaskToImage, MaskBoundingBox, EditMask
+    from .nodes.Masking import Mask_Rectangular_Area, ImageMaskScaleAs, MaskToImage, MaskBoundingBox, EditMask, RoundMask
     
 except ImportError as e:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Masking nodes\033[0m")
@@ -51,6 +51,7 @@ NODE_CLASS_MAPPINGS = {
     "ImageMaskSwitch-beyond_nodes": ImageMaskSwitch,
     "BooleanControlOutput-beyond_nodes": BooleanControlOutput,
     "EditMask-beyond_nodes": EditMask,
+    "RoundMask-beyond_nodes": RoundMask,
 
 }
 
@@ -78,5 +79,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "BooleanSwitch-beyond_nodes": "Boolean Switch Any Type 🦾",
     "ImageMaskSwitch-beyond_nodes":"Image and Mask Switch 🦾",
     "BooleanControlOutput-beyond_nodes": "Boolean Control Output 🦾",
-    "EditMask-beyond_nodes": "Edit Mask from image input 🦾"    
+    "EditMask-beyond_nodes": "Edit Mask from image input 🦾",
+    "RoundMask-beyond_nodes": "Round Mask 🦾",    
 }

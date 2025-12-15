@@ -364,3 +364,21 @@ class EditMask:
         return {"ui":{"images": images},"result": (output_image, output_mask)}
 
         # return (output_image, output_mask)
+
+class RoundMask:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+            "mask": ("MASK",),  
+        }}
+
+    RETURN_TYPES = ("MASK",)
+    FUNCTION = "round"
+    CATEGORY = "Beyond nodes/masking"
+    DESCRIPTION = """
+Rounds the mask or batch of masks to a binary mask.  
+"""
+
+    def round(self, mask):
+        mask = mask.round()
+        return (mask,)
