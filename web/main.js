@@ -23,7 +23,7 @@ import { api } from '../../../scripts/api.js'
 
 
 app.registerExtension({
-  name: 'comfyui-edit-mask.editMask',
+  name: 'Comfy.EditMask-beyond_nodes',
   async getCustomWidgets (app) {
     return {
       IMAGE_FILE (node, inputName, inputData, app) {
