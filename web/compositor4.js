@@ -2223,31 +2223,6 @@ const Editor = (node, fabric) => {
     img.setCoords();
   };
 
-  const setLockedLayer = (indexOrNull) => {
-    lockedLayerIndex = indexOrNull;
-    // Apply to all (only one will be locked)
-    for (let i = 0; i < images.length; i++) applyLockStateToImage(i);
-
-    // If currently selected object became locked, deselect it
-    const active = fabricInstance?.getActiveObject();
-    if (active && lockedLayerIndex !== null && active === images[lockedLayerIndex]) {
-        fabricInstance.discardActiveObject();
-    }
-
-    updateLayerPanelOrder();
-    updateCanvasZOrder();
-    fabricInstance?.renderAll();
-    saveAndUpdateSeed();
-  };
-
-  // Ensure the default locked layer is set during initialization
-  setLockedLayer(DEFAULT_LOCKED_LAYER_INDEX);
-
-  const toggleLayerLock = (index) => {
-    // Toggle: lock this layer, or unlock if it’s already locked
-    setLockedLayer(isLockedLayer(index) ? null : index);
-  };
-
   // Helper function to convert rgba/hex to hex format for color input
   const rgbaToHex = (color) => {
     // If already hex, return as-is
@@ -2557,6 +2532,31 @@ const Editor = (node, fabric) => {
     }
 
     fabricInstance.renderAll();
+  };
+
+    const setLockedLayer = (indexOrNull) => {
+    lockedLayerIndex = indexOrNull;
+    // Apply to all (only one will be locked)
+    for (let i = 0; i < images.length; i++) applyLockStateToImage(i);
+
+    // If currently selected object became locked, deselect it
+    const active = fabricInstance?.getActiveObject();
+    if (active && lockedLayerIndex !== null && active === images[lockedLayerIndex]) {
+        fabricInstance.discardActiveObject();
+    }
+
+    updateLayerPanelOrder();
+    updateCanvasZOrder();
+    fabricInstance?.renderAll();
+    saveAndUpdateSeed();
+  };
+
+  // Ensure the default locked layer is set during initialization
+  setLockedLayer(DEFAULT_LOCKED_LAYER_INDEX);
+
+  const toggleLayerLock = (index) => {
+    // Toggle: lock this layer, or unlock if it’s already locked
+    setLockedLayer(isLockedLayer(index) ? null : index);
   };
 
   const createCanvasElement = () => {
