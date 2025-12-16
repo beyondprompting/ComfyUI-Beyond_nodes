@@ -1081,7 +1081,7 @@ const Editor = (node, fabric) => {
   let backgroundIsVisible = true; // Track if background is visible (not transparent)
 
   // Lock image layer as background 
-  let lockedLayerIndex = null; // Track which layer is locked (null = none)
+  let lockedLayerIndex = DEFAULT_LOCKED_LAYER_INDEX; // Track which layer is locked as background starting with the Default locked
 
   // Store references to foreground drawing layer
   let foregroundLayer = null; // Fabric image object for drawing layer
@@ -2240,6 +2240,9 @@ const Editor = (node, fabric) => {
     saveAndUpdateSeed();
   };
 
+  // Ensure the default locked layer is set during initialization
+  setLockedLayer(DEFAULT_LOCKED_LAYER_INDEX);
+
   const toggleLayerLock = (index) => {
     // Toggle: lock this layer, or unlock if it’s already locked
     setLockedLayer(isLockedLayer(index) ? null : index);
@@ -2295,9 +2298,6 @@ const Editor = (node, fabric) => {
       boxShadow: "inset 0 0 5px rgba(0, 0, 0, 0.2)",
     });
 
-    // Ensure the default locked layer is set during initialization
-    setLockedLayer(DEFAULT_LOCKED_LAYER_INDEX);
-
     // Add title
     const title = createLayersPanelTitle();
     layersPanelEl.appendChild(title);
@@ -2316,7 +2316,7 @@ const Editor = (node, fabric) => {
       const layerItem = createLayerItem(index);
       layersPanelEl.appendChild(layerItem);
     });
-    
+
     // Add background layer at the bottom (fixed)
     const backgroundLayer = createBackgroundLayer();
     layersPanelEl.appendChild(backgroundLayer);
