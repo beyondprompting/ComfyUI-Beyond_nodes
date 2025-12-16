@@ -2282,7 +2282,7 @@ const Editor = (node, fabric) => {
     // Create layers panel
     layersPanelEl = document.createElement("div");
     applyStyles(layersPanelEl, {
-      width: "150px",
+      width: "175px",
       height: HEIGHT - 8 + PADDING * 2 + COMPOSITION_BORDER_SIZE * 2 + "px",
       backgroundColor: COLOR_TOOLBAR_BG,
       borderRadius: "8px",
