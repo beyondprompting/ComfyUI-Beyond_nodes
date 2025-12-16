@@ -59,7 +59,7 @@ NODE_CLASS_MAPPINGS = {
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     ### Compositor Nodes
-    "Compositor3-beyond_nodes": "🦾 Compositor V3 🦾",
+    "Compositor3-beyond_nodes": "🦾 Compositor V3 ",
     "Compositor4-beyond_nodes": "🦾 Compositor V4 ",
     "CompositorConfig4-beyond_nodes": "🦾 Compositor Config V4 🦾",
     "Compositor4TransformsOut-beyond_nodes": "🦾 Compositor Transforms Output V4 🦾",

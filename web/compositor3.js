@@ -102,7 +102,7 @@ function centerSelected(e, currentNode) {
  * https://docs.comfy.org/essentials/javascript_objects_and_hijacking
  */
 app.registerExtension({
-    name: "Comfy.Compositor3",
+    name: "Comfy.Compositor3-beyond_nodes",
 
     async getCustomWidgets(app) {
         // no custom widgets
