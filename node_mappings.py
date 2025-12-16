@@ -1,5 +1,6 @@
 try:
     from .nodes.Compositor4 import Compositor4
+    from .nodes.Compositor3 import Compositor3
     from .nodes.CompositorConfig4 import CompositorConfig4
     from .nodes.Compositor4TransformsOut import Compositor4TransformsOut
     from .nodes.Compositor4MasksOutput import Compositor4MasksOutput
@@ -28,6 +29,7 @@ except ImportError:
 
 NODE_CLASS_MAPPINGS = { 
     ### Compositor Nodes
+    "Compositor3-beyond_nodes": Compositor3,
     "Compositor4-beyond_nodes": Compositor4,
     "CompositorConfig4-beyond_nodes": CompositorConfig4,
     "Compositor4TransformsOut-beyond_nodes": Compositor4TransformsOut,
@@ -57,6 +59,7 @@ NODE_CLASS_MAPPINGS = {
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     ### Compositor Nodes
+    "Compositor3-beyond_nodes": "🦾 Compositor V3 🦾",
     "Compositor4-beyond_nodes": "🦾 Compositor V4 ",
     "CompositorConfig4-beyond_nodes": "🦾 Compositor Config V4 🦾",
     "Compositor4TransformsOut-beyond_nodes": "🦾 Compositor Transforms Output V4 🦾",

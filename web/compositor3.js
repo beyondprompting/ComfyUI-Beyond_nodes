@@ -5,7 +5,7 @@ import { fabric } from "./fabric.js";
 
 /** check if this is a Compositor3 node */
 function isCompositor3(node) {
-    return node.constructor.comfyClass == "Compositor3";
+    return node.constructor.comfyClass == "Compositor3-beyond_nodes";
 }
 
 function isCompositorConfig3(node) {
