@@ -2028,6 +2028,7 @@ const Editor = (node, fabric) => {
     layerThumbnails[index] = thumbnail;
     layerMaskThumbnails[index] = maskThumbnail;
     layerVisibilityButtons[index] = visibilityButton;
+    debugger
     layerLockButtons[index] = lockButton; // Beyond
 
 
