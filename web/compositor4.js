@@ -2234,10 +2234,7 @@ const Editor = (node, fabric) => {
         fabricInstance.discardActiveObject();
     }
 
-    updateLayerPanelOrder();
-    updateCanvasZOrder();
     fabricInstance?.renderAll();
-    saveAndUpdateSeed();
   };
 
   // Ensure the default locked layer is set during initialization
