@@ -2234,11 +2234,12 @@ const Editor = (node, fabric) => {
         fabricInstance.discardActiveObject();
     }
 
+    updateLayerPanelOrder();
+    updateCanvasZOrder();
     fabricInstance?.renderAll();
+    saveAndUpdateSeed();
   };
 
-  // Ensure the default locked layer is set during initialization
-  setLockedLayer(DEFAULT_LOCKED_LAYER_INDEX);
 
   const toggleLayerLock = (index) => {
     // Toggle: lock this layer, or unlock if it’s already locked
