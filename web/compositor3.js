@@ -9,7 +9,7 @@ function isCompositor3(node) {
 }
 
 function isCompositorConfig3(node) {
-    return node.constructor.comfyClass == "CompositorConfig3";
+    return node.constructor.comfyClass == "CompositorConfig3-beyond_nodes";
 }
 
 function getCompositorWidget(node, widgetName) {

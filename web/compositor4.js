@@ -2864,10 +2864,10 @@ const Editor = (node, fabric) => {
     // Update composition border
     if (compositionBorder) {
       compositionBorder.set({
-        left: p - COMPOSITION_BORDER_SIZE,
-        top: p - COMPOSITION_BORDER_SIZE,
-        width: w + COMPOSITION_BORDER_SIZE * 2,
-        height: h + COMPOSITION_BORDER_SIZE * 2,
+        left: p + COMPOSITION_BORDER_SIZE - COMPOSITION_BORDER_SIZE / 2,
+        top: p + COMPOSITION_BORDER_SIZE - COMPOSITION_BORDER_SIZE / 2,
+        width: w + COMPOSITION_BORDER_SIZE,
+        height: h + COMPOSITION_BORDER_SIZE,
       });
     }
 
@@ -4411,10 +4411,10 @@ const Editor = (node, fabric) => {
 
           // Update composition border
           compositionBorder.set({
-            left: canvasPadding - COMPOSITION_BORDER_SIZE,
-            top: canvasPadding - COMPOSITION_BORDER_SIZE,
-            width: canvasWidth + COMPOSITION_BORDER_SIZE * 2,
-            height: canvasHeight + COMPOSITION_BORDER_SIZE * 2,
+            left: canvasPadding + COMPOSITION_BORDER_SIZE - COMPOSITION_BORDER_SIZE / 2,
+            top: canvasPadding + COMPOSITION_BORDER_SIZE - COMPOSITION_BORDER_SIZE / 2,
+            width: canvasWidth + COMPOSITION_BORDER_SIZE,
+            height: canvasHeight + COMPOSITION_BORDER_SIZE,
           });
 
           // Update container size
