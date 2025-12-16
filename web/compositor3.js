@@ -186,7 +186,7 @@ app.registerExtension({
             const e = event.detail.output;
             const nodeId = event.detail.node;
             const node = Editor.hook(nodeId);
-            if (!node || node.type != "Compositor3") {
+            if (!node || node.type != "Compositor3-beyond_nodes") {
                 // console.log(node.type);
                 return;
             }
@@ -411,7 +411,7 @@ app.registerExtension({
         // console.log("afterConfigureGraph", args);
         
         // reset the config timestamp, to ensure re-triggering
-        const configs = app.graph.findNodesByType("CompositorConfig3");
+        const configs = app.graph.findNodesByType("CompositorConfig3-beyond_nodes");
         configs.forEach((c) => {
             const initialized = getCompositorWidget(c, "initialized");
             initialized.value = Date.now();
@@ -423,7 +423,7 @@ app.registerExtension({
         // broadcast channel
         //
         // setup broadcast channel, also needs to be done on node created or connection change...
-        const nodes = app.graph.findNodesByType("Compositor3");
+        const nodes = app.graph.findNodesByType("Compositor3-beyond_nodes");
         
         // probably too late here as it's already running in the back
         nodes.forEach((currentNode) => {
@@ -708,7 +708,7 @@ class Editor {
 
     static addCanvasBorderColorSetting() {
         app.extensionManager.setting.set({
-            id: "Compositor3.Canvas.BORDER_COLOR",
+            id: "Compositor3-beyond_nodes.Canvas.BORDER_COLOR",
             name: "Border Color",
             tooltip: "give an hex code with alpha, e.g.: #00b300b0, it's the area controlled by 'padding' size outside the  output that will not be exported but used for manipulation",
             type: "text",
@@ -721,7 +721,7 @@ class Editor {
 
     static addCompositionBorderColorSetting() {
         app.extensionManager.setting.set({
-            id: "Compositor3.Composition.BORDER_COLOR",
+            id: "Compositor3-beyond_nodes.Composition.BORDER_COLOR",
             name: "Border Color (not rendered)",
             type: "text",
             tooltip: "give hex code with alpha eg.: #00b300b0, this will help identifying what is withing the output",
@@ -734,7 +734,7 @@ class Editor {
 
     static addCompositionBorderSizeSetting() {
         app.extensionManager.setting.set({
-            id: "Compositor3.Composition.BORDER_SIZE",
+            id: "Compositor3-beyond_nodes.Composition.BORDER_SIZE",
             name: "Border Size",
             type: "slider",
             attrs: {
@@ -753,7 +753,7 @@ class Editor {
 
     static addCompositionBackgroundColorSetting() {
         app.extensionManager.setting.set({
-            id: "Compositor3.Composition.BACKGROUND_COLOR",
+            id: "Compositor3-beyond_nodes.Composition.BACKGROUND_COLOR",
             name: "Background Color - Output",
             type: "text",
             tooltip: "give hex code with alpha eg.: #00b300b0, this will help identifying what is withing the output",
