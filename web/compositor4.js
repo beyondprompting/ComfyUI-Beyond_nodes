@@ -2590,8 +2590,8 @@ const Editor = (node, fabric) => {
     // a rectangle representing the composition area
     //p, w, h, node
     compositionArea = new fabric.Rect({
-      left: canvasPadding + COMPOSITION_BORDER_SIZE,
-      top: canvasPadding + COMPOSITION_BORDER_SIZE,
+      left: canvasPadding + COMPOSITION_BORDER_SIZE / 2,
+      top: canvasPadding + COMPOSITION_BORDER_SIZE / 2,
       fill: backgroundColor,
       width: canvasWidth,
       height: canvasHeight,
@@ -2864,8 +2864,8 @@ const Editor = (node, fabric) => {
     // Update composition border
     if (compositionBorder) {
       compositionBorder.set({
-        left: p + COMPOSITION_BORDER_SIZE - COMPOSITION_BORDER_SIZE / 2,
-        top: p + COMPOSITION_BORDER_SIZE - COMPOSITION_BORDER_SIZE / 2,
+        left: p + COMPOSITION_BORDER_SIZE / 2,
+        top: p + COMPOSITION_BORDER_SIZE / 2,
         width: w + COMPOSITION_BORDER_SIZE,
         height: h + COMPOSITION_BORDER_SIZE,
       });
@@ -2887,8 +2887,8 @@ const Editor = (node, fabric) => {
     const data = fabricInstance.toDataURL({
       format: "png",
       quality: QUALITY,
-      left: canvasPadding + COMPOSITION_BORDER_SIZE,
-      top: canvasPadding + COMPOSITION_BORDER_SIZE,
+      left: canvasPadding + COMPOSITION_BORDER_SIZE / 2,
+      top: canvasPadding + COMPOSITION_BORDER_SIZE / 2,
       width: canvasWidth,
       height: canvasHeight,
     });
@@ -3613,8 +3613,8 @@ const Editor = (node, fabric) => {
       fabric.Image.fromURL(dataUrl, (img) => {
         foregroundLayer = img;
         img.set({
-          left: canvasPadding + COMPOSITION_BORDER_SIZE,
-          top: canvasPadding + COMPOSITION_BORDER_SIZE,
+          left: canvasPadding + COMPOSITION_BORDER_SIZE / 2,
+          top: canvasPadding + COMPOSITION_BORDER_SIZE / 2,
           selectable: false,
           evented: false,
           visible: foregroundIsVisible,
@@ -4048,7 +4048,7 @@ const Editor = (node, fabric) => {
 
   const snapToGrid = (value) => {
     // Calculate the offset of the composition area
-    const offset = PADDING + COMPOSITION_BORDER_SIZE;
+    const offset = PADDING + COMPOSITION_BORDER_SIZE / 2;
 
     // Snap relative to the composition area's top-left corner
     return Math.round((value - offset) / gridSize) * gridSize + offset;
@@ -4061,8 +4061,8 @@ const Editor = (node, fabric) => {
     }
 
     const objBounds = activeObject.getBoundingRect();
-    const compLeft = canvasPadding + COMPOSITION_BORDER_SIZE;
-    const compTop = canvasPadding + COMPOSITION_BORDER_SIZE;
+    const compLeft = canvasPadding + COMPOSITION_BORDER_SIZE / 2;
+    const compTop = canvasPadding + COMPOSITION_BORDER_SIZE / 2;
     const compRight = compLeft + canvasWidth;
     const compBottom = compTop + canvasHeight;
     const compCenterX = compLeft + canvasWidth / 2;
@@ -4402,8 +4402,8 @@ const Editor = (node, fabric) => {
 
           // Update composition area (including restored background color)
           compositionArea.set({
-            left: canvasPadding + COMPOSITION_BORDER_SIZE,
-            top: canvasPadding + COMPOSITION_BORDER_SIZE,
+            left: canvasPadding + COMPOSITION_BORDER_SIZE / 2,
+            top: canvasPadding + COMPOSITION_BORDER_SIZE / 2,
             width: canvasWidth,
             height: canvasHeight,
             fill: backgroundColor,
