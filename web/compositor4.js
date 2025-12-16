@@ -21,9 +21,6 @@ const SNAP_ENABLED = false; // toggle snap to grid on/off
 // wether to overwrite existing images on upload
 const OVERWRITE = true;
 
-// Layer Locking Beyond 
-const LOCKED_BG_INDEX = 0; // or 8 if you want “last slot” as the background
-const isLockedLayer = (i) => i === LOCKED_BG_INDEX;
 
 // UI Color Constants
 const COLOR_TOOLBAR_BG = "rgba(50, 50, 50, 0.9)";
@@ -1070,7 +1067,7 @@ const Editor = (node, fabric) => {
   let layerMaskThumbnails = createNullArray(IMAGE_COUNT); // Store mask preview elements
   let layerVisibilityButtons = createNullArray(IMAGE_COUNT);
 
-  // Beyond: Store lock button references
+  // Beyond: Store lock button references Beyond
   let layerLockButtons = createNullArray(IMAGE_COUNT);
 
   // Store references to background layer UI elements
@@ -2938,6 +2935,8 @@ const Editor = (node, fabric) => {
   };
 
   const fromUrlCallback = (img, index) => {
+    
+    const locked = isLockedLayer(index); // Beyond
     // callback when loading image from url, appends to fabric canvas
     img.set({
       left: canvasPadding + COMPOSITION_BORDER_SIZE,
