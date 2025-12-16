@@ -1975,6 +1975,7 @@ const Editor = (node, fabric) => {
       maskThumbnail,
       visibilityButton,
       dragHandle,
+      lockButton, // Beyond
     } = createLayerUI({
       index,
       type: "image",
@@ -2030,6 +2031,8 @@ const Editor = (node, fabric) => {
     layerThumbnails[index] = thumbnail;
     layerMaskThumbnails[index] = maskThumbnail;
     layerVisibilityButtons[index] = visibilityButton;
+    layerLockButtons[index] = lockButton; // Beyond
+
 
     // Set initial lock button state Beyond
     if (lockButton) {
@@ -2486,7 +2489,15 @@ const Editor = (node, fabric) => {
     for (let i = 0; i < IMAGE_COUNT; i++) {
       const item = layerItems[i];
       if (!item) continue;
-      // if you stored lock buttons in an array, update them here
+
+      const btn = layerLockButtons[i];
+      if (!btn) continue;
+
+      const locked = isLockedLayer(i);
+      btn.textContent = locked ? "🔒" : "🔓";
+      btn.style.backgroundColor = locked
+        ? COLOR_BUTTON_ACTIVE
+        : COLOR_BUTTON_BG;
     }
 
     // Update selection highlight after reordering
