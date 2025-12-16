@@ -926,6 +926,16 @@ class Editor {
         // this will be empty so, should we restore ?
         // only happens here once at first run afer reloading
 
+        // Lock the first image layer
+        if (index === 0) {
+            theImage.lockMovementX = true;
+            theImage.lockMovementY = true;
+            theImage.lockScalingX = true;
+            theImage.lockScalingY = true;
+            theImage.lockRotation = true;
+            theImage.selectable = false;
+        }
+
     }
 
     replaceImage(index, theImage) {
@@ -936,6 +946,16 @@ class Editor {
         theImage.set(oldTransform);
         this.fcanvas.add(theImage);
         this.inputImages[this.imageNameAt(index)] = theImage;
+
+        // Lock the first image layer
+        if (index === 0) {
+            theImage.lockMovementX = true;
+            theImage.lockMovementY = true;
+            theImage.lockScalingX = true;
+            theImage.lockScalingY = true;
+            theImage.lockRotation = true;
+            theImage.selectable = false;
+        }
     }
 
     addOrReplaceImage(theImage, index, nodeId, r, shouldRestore) {
@@ -963,6 +983,16 @@ class Editor {
                     theImage.originY = restoreParams.originY;
                     theImage.skewY = restoreParams.skewY;
                     theImage.skewX = restoreParams.skewX;
+
+                    // Lock the first image layer
+                    if (index === 0) {
+                        theImage.lockMovementX = true;
+                        theImage.lockMovementY = true;
+                        theImage.lockScalingX = true;
+                        theImage.lockScalingY = true;
+                        theImage.lockRotation = true;
+                        theImage.selectable = false;
+                    }
                 }
             } catch (e) {
                 // console.log(e);
@@ -1297,7 +1327,7 @@ class Editor {
      */
     createCompositionBorder() {
         // p, w, h, node
-        debugger;
+        // debugger;
         const compositionBorder = new fabric.Rect({
             left: this.p.value - this.COMPOSITION_BORDER_SIZE,
             top: this.p.value - this.COMPOSITION_BORDER_SIZE,
