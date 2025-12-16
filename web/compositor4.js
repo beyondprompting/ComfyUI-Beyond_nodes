@@ -21,6 +21,10 @@ const SNAP_ENABLED = false; // toggle snap to grid on/off
 // wether to overwrite existing images on upload
 const OVERWRITE = true;
 
+// Layer Locking Beyond 
+const LOCKED_BG_INDEX = 0; // or 8 if you want “last slot” as the background
+const isLockedLayer = (i) => i === LOCKED_BG_INDEX;
+
 // UI Color Constants
 const COLOR_TOOLBAR_BG = "rgba(50, 50, 50, 0.9)";
 const COLOR_BUTTON_BG = "rgba(70, 70, 70, 0.9)";
@@ -862,6 +866,19 @@ const createLayerUI = (config) => {
     },
   });
 
+  // Lock button Beyond
+  const lockButton = createButton({
+  type: "visibility",
+  content: "🔓",
+  onClick: (e) => {
+    e.stopPropagation();
+    if (config.onLockToggle) config.onLockToggle(index);
+  },
+  title: "Lock/unlock layer (prevents moving/selecting)",
+  });
+
+  infoContainer.appendChild(lockButton);
+
   infoContainer.appendChild(labelElement);
   infoContainer.appendChild(visibilityButton);
   layerItem.appendChild(infoContainer);
@@ -878,6 +895,7 @@ const createLayerUI = (config) => {
     visibilityButton,
     colorInput,
     dragHandle,
+    lockButton,
   };
 };
 
@@ -1058,6 +1076,9 @@ const Editor = (node, fabric) => {
   let backgroundVisibilityButton = null;
   let backgroundColorOpaque = COMPOSITION_BACKGROUND_COLOR; // Store the opaque color when toggling to transparent
   let backgroundIsVisible = true; // Track if background is visible (not transparent)
+
+  // Lock image layer as background 
+  let lockedLayerIndex = null; // Track which layer is locked (null = none)
 
   // Store references to foreground drawing layer
   let foregroundLayer = null; // Fabric image object for drawing layer
@@ -1958,11 +1979,16 @@ const Editor = (node, fabric) => {
       index,
       type: "image",
       label: `${index + 1}`,
-      isDraggable: true,
+      isDraggable: !isLockedLayer(index),
+      onLockToggle: (idx) => toggleLayerLock(idx),
       onVisibilityToggle: () => toggleImageVisibility(index),
       onMaskToggle: (idx) => toggleMaskEnabled(idx),
       onSelect: () => selectImageByIndex(index),
       onDragStart: (e) => {
+        if (isLockedLayer(index)) {
+          e.preventDefault();
+          return;
+        }
         draggedLayerIndex = index;
         dragHandle.style.cursor = "grabbing";
         if (layerItems[index]) {
@@ -2004,6 +2030,13 @@ const Editor = (node, fabric) => {
     layerThumbnails[index] = thumbnail;
     layerMaskThumbnails[index] = maskThumbnail;
     layerVisibilityButtons[index] = visibilityButton;
+
+    // Set initial lock button state Beyond
+    if (lockButton) {
+      const locked = isLockedLayer(index);
+      lockButton.textContent = locked ? "🔒" : "🔓";
+      lockButton.style.backgroundColor = locked ? COLOR_BUTTON_ACTIVE : COLOR_BUTTON_BG;
+    }
 
     return layerItem;
   };
@@ -2158,6 +2191,57 @@ const Editor = (node, fabric) => {
     return layerItem;
   };
 
+  // Lock Image Background Image Helpers - Beyond
+
+  const isLockedLayer = (index) => lockedLayerIndex === index;
+
+  const applyLockStateToImage = (index) => {
+    const img = images[index];
+    if (!img) return;
+
+    const locked = isLockedLayer(index);
+
+    img.set({
+      selectable: !locked,
+      evented: !locked,
+      hasControls: !locked,
+      hasBorders: !locked,
+      lockMovementX: locked,
+      lockMovementY: locked,
+      lockScalingX: locked,
+      lockScalingY: locked,
+      lockRotation: locked,
+      hoverCursor: locked ? "default" : "move",
+    });
+
+    // Optional extra hardening (prevents hit-testing in some cases)
+    // img.set({ skipTargetFind: locked });
+
+    img.setCoords();
+  };
+
+  const setLockedLayer = (indexOrNull) => {
+    lockedLayerIndex = indexOrNull;
+    // Apply to all (only one will be locked)
+    for (let i = 0; i < images.length; i++) applyLockStateToImage(i);
+
+    // If currently selected object became locked, deselect it
+    const active = fabricInstance?.getActiveObject();
+    if (active && lockedLayerIndex !== null && active === images[lockedLayerIndex]) {
+      fabricInstance.discardActiveObject();
+    }
+
+    updateLayerPanelOrder();
+    updateCanvasZOrder();
+    fabricInstance?.renderAll();
+    saveAndUpdateSeed();
+  };
+
+  const toggleLayerLock = (index) => {
+    // Toggle: lock this layer, or unlock if it’s already locked
+    setLockedLayer(isLockedLayer(index) ? null : index);
+  };
+
   // Helper function to convert rgba/hex to hex format for color input
   const rgbaToHex = (color) => {
     // If already hex, return as-is
@@ -2254,6 +2338,7 @@ const Editor = (node, fabric) => {
   };
 
   const selectImageByIndex = (index) => {
+    if (isLockedLayer(index)) return; // prevent selecting locked bg
     if (images[index] && images[index].visible !== false) {
       fabricInstance.setActiveObject(images[index]);
       fabricInstance.renderAll();
@@ -2397,6 +2482,13 @@ const Editor = (node, fabric) => {
       }
     });
 
+    // update these icons whenever selection/order refreshes Beyond
+    for (let i = 0; i < IMAGE_COUNT; i++) {
+      const item = layerItems[i];
+      if (!item) continue;
+      // if you stored lock buttons in an array, update them here
+    }
+
     // Update selection highlight after reordering
     updateLayerSelectionHighlight();
   };
@@ -2413,15 +2505,30 @@ const Editor = (node, fabric) => {
     if (compositionArea) {
       fabricInstance.sendToBack(compositionArea);
     }
-    if (compositionBorder) {
-      fabricInstance.bringToFront(compositionBorder);
+
+    if (lockedLayerIndex !== null && images[lockedLayerIndex]) {
+      const bg = images[lockedLayerIndex];
+
+      // Force bg to the bottom of the stack...
+      fabricInstance.sendToBack(bg);
+
+      // ...then force compositionArea below it...
+      if (compositionArea) fabricInstance.sendToBack(compositionArea);
+
+      // ...then bring bg back above compositionArea.
+      fabricInstance.bringToFront(bg);
+    }
+
+    // 1) Put locked background image directly above compositionArea
+    if (lockedLayerIndex !== null && images[lockedLayerIndex]) {
+      fabricInstance.bringToFront(images[lockedLayerIndex]);
     }
 
     // Then arrange images according to their positions
     indexPositionPairs.forEach(({ index }) => {
-      if (images[index]) {
-        fabricInstance.bringToFront(images[index]);
-      }
+      if (!images[index]) return;
+      if (index === lockedLayerIndex) return;
+      fabricInstance.bringToFront(images[index]);
     });
 
     // Bring FG layer above images but keep it below border
@@ -2821,9 +2928,17 @@ const Editor = (node, fabric) => {
     img.set({
       left: canvasPadding + COMPOSITION_BORDER_SIZE,
       top: canvasPadding + COMPOSITION_BORDER_SIZE,
-      selectable: true,
-      evented: true,
-      perPixelTargetFind: preciseSelection, // Set precise selection
+      selectable: !locked, // Beyond
+      evented: !locked, // Beyond
+      hasControls: !locked, // Beyond
+      hasBorders: !locked, // Beyond
+      lockMovementX: locked, // Beyond
+      lockMovementY: locked, // Beyond
+      lockScalingX: locked, // Beyond
+      lockScalingY: locked, // Beyond
+      lockRotation: locked, // Beyond
+      hoverCursor: locked ? "default" : "move", // Beyond
+      perPixelTargetFind: preciseSelection, 
     });
 
     let currentTransform = null;
@@ -2853,6 +2968,10 @@ const Editor = (node, fabric) => {
 
     // Update layer thumbnail
     updateLayerThumbnail(index);
+
+    // Apply lock state if needed Beyond
+    applyLockStateToImage(index);
+    updateCanvasZOrder();
 
     // Update visibility button state if image is hidden using stored reference
     const visibilityBtn = layerVisibilityButtons[index];
@@ -3057,6 +3176,7 @@ const Editor = (node, fabric) => {
       padding: canvasPadding,
       backgroundColor: backgroundColor,
       foregroundImageName: foregroundImageName,
+      lockedLayerIndex: lockedLayerIndex, // Beyond: Save locked layer index
     };
   };
 
@@ -3128,6 +3248,11 @@ const Editor = (node, fabric) => {
             appendImage(imageName, index);
           }
         });
+      }
+      
+      // Restore locked layer index if available - Beyond
+      if (data.lockedLayerIndex !== undefined) {
+        lockedLayerIndex = data.lockedLayerIndex;
       }
 
       return data;
