@@ -2406,24 +2406,6 @@ const Editor = (node, fabric) => {
     saveAndUpdateSeed();
   };
 
-  const swapLayerPositions = (fromIndex, toIndex) => {
-    // Swap the positions in the imagePositions array
-    const fromPosition = imagePositions[fromIndex];
-    const toPosition = imagePositions[toIndex];
-
-    imagePositions[fromIndex] = toPosition;
-    imagePositions[toIndex] = fromPosition;
-
-    // Update the layer panel UI to reflect new order
-    updateLayerPanelOrder();
-
-    // Update the canvas z-order based on new positions
-    updateCanvasZOrder();
-
-    // Save the changes
-    saveAndUpdateSeed();
-  };
-
   const updateLayerPanelOrder = () => {
     // Create array of [index, position] pairs and sort by position (highest first for UI)
     const indexPositionPairs = createSortedIndexPositionPairs(
@@ -2481,6 +2463,24 @@ const Editor = (node, fabric) => {
 
     // Update selection highlight after reordering
     updateLayerSelectionHighlight();
+  };
+
+  const swapLayerPositions = (fromIndex, toIndex) => {
+    // Swap the positions in the imagePositions array
+    const fromPosition = imagePositions[fromIndex];
+    const toPosition = imagePositions[toIndex];
+
+    imagePositions[fromIndex] = toPosition;
+    imagePositions[toIndex] = fromPosition;
+
+    // Update the layer panel UI to reflect new order
+    updateLayerPanelOrder();
+
+    // Update the canvas z-order based on new positions
+    updateCanvasZOrder();
+
+    // Save the changes
+    saveAndUpdateSeed();
   };
 
   const updateCanvasZOrder = () => {
