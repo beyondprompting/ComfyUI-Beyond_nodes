@@ -846,6 +846,7 @@ const createLayerUI = (config) => {
     alignItems: "center",
     flex: "1",
     gap: "3px",
+    minWidth: "64px",
   });
 
   const labelElement = document.createElement("div");
