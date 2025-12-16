@@ -1986,10 +1986,7 @@ const Editor = (node, fabric) => {
       onMaskToggle: (idx) => toggleMaskEnabled(idx),
       onSelect: () => selectImageByIndex(index),
       onDragStart: (e) => {
-        if (isLockedLayer(index)) {
-          e.preventDefault();
-          return;
-        }
+        if (isLockedLayer(index)) return;
         draggedLayerIndex = index;
         dragHandle.style.cursor = "grabbing";
         if (layerItems[index]) {
@@ -2267,6 +2264,7 @@ const Editor = (node, fabric) => {
 
   const createLayersPanel = () => {
     // Create main content wrapper (canvas + layers side by side)
+   
     const contentWrapper = document.createElement("div");
     applyStyles(contentWrapper, {
       display: "flex",
@@ -2832,7 +2830,7 @@ const Editor = (node, fabric) => {
     return containerEl;
   };
 
-  const updateCanvasDimensions = (width, height, padding) => {
+  const updateCanvasDimensions = (width, height, padding, borderSize) => {
     // Ensure numeric values to avoid string concatenation issues
     const w = Number(width);
     const h = Number(height);
