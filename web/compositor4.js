@@ -2233,8 +2233,7 @@ const Editor = (node, fabric) => {
     if (active && lockedLayerIndex !== null && active === images[lockedLayerIndex]) {
         fabricInstance.discardActiveObject();
     }
-
-    updateCanvasZOrder();
+    
     fabricInstance?.renderAll();
     saveAndUpdateSeed();
   };
