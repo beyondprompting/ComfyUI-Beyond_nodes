@@ -1070,6 +1070,9 @@ const Editor = (node, fabric) => {
   let layerMaskThumbnails = createNullArray(IMAGE_COUNT); // Store mask preview elements
   let layerVisibilityButtons = createNullArray(IMAGE_COUNT);
 
+  // Beyond: Store lock button references
+  let layerLockButtons = createNullArray(IMAGE_COUNT);
+
   // Store references to background layer UI elements
   let backgroundColorInput = null;
   let backgroundColorThumbnail = null;
