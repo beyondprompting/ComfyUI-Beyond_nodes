@@ -42,6 +42,9 @@ const ICON_BUTTON_SIZE = "24px";
 const BUTTON_FONT_SIZE = "12px";
 const ICON_FONT_SIZE = "14px";
 
+// Define the default locked layer index at the top of the file
+const DEFAULT_LOCKED_LAYER_INDEX = 0; // Set to the first layer by default
+
 app.registerExtension({
   name: "Comfy.Compositor4-beyond_nodes",
 
@@ -874,10 +877,9 @@ const createLayerUI = (config) => {
   title: "Lock/unlock layer (prevents moving/selecting)",
   });
 
-  infoContainer.appendChild(lockButton);
-
   infoContainer.appendChild(labelElement);
   infoContainer.appendChild(visibilityButton);
+  infoContainer.appendChild(lockButton);
   layerItem.appendChild(infoContainer);
 
   // Add click handler for foreground/background layers
@@ -2028,7 +2030,6 @@ const Editor = (node, fabric) => {
     layerThumbnails[index] = thumbnail;
     layerMaskThumbnails[index] = maskThumbnail;
     layerVisibilityButtons[index] = visibilityButton;
-    debugger
     layerLockButtons[index] = lockButton; // Beyond
 
 
@@ -2229,7 +2230,7 @@ const Editor = (node, fabric) => {
     // If currently selected object became locked, deselect it
     const active = fabricInstance?.getActiveObject();
     if (active && lockedLayerIndex !== null && active === images[lockedLayerIndex]) {
-      fabricInstance.discardActiveObject();
+        fabricInstance.discardActiveObject();
     }
 
     updateLayerPanelOrder();
@@ -2237,6 +2238,9 @@ const Editor = (node, fabric) => {
     fabricInstance?.renderAll();
     saveAndUpdateSeed();
   };
+
+  // Ensure the default locked layer is set during initialization
+  setLockedLayer(DEFAULT_LOCKED_LAYER_INDEX);
 
   const toggleLayerLock = (index) => {
     // Toggle: lock this layer, or unlock if it’s already locked
