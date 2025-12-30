@@ -1,4 +1,5 @@
 from nodes import MAX_RESOLUTION
+from ..common.imageFunctions import tensor2pil, pil2tensor
 
 class ImageScaleDown:
   crop_methods = ["disabled", "center"]
