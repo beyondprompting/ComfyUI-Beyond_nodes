@@ -1,3 +1,6 @@
+from PIL import Image
+import torch
+
 from nodes import MAX_RESOLUTION
 from ..common.imageFunctions import tensor2pil, pil2tensor
 
@@ -50,6 +53,10 @@ class ImageScaleDown:
     return (torch.cat(results, dim=0),)
 
 class ImageScaleDownBy(ImageScaleDown):
+
+  def __init__(self):
+    pass
+
   @classmethod
   def INPUT_TYPES(s):
     return {
