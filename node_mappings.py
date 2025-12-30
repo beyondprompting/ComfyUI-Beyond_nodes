@@ -8,6 +8,12 @@ except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Compositor nodes\033[0m")
 
 try:
+    from .nodes.Image import imageScaleDown, imageScaleDownBy
+    print("loaded Image nodes")
+except ImportError:
+    print("\033[34mBeyond Nodes: \033[92mFailed loading Image nodes\033[0m")
+
+try:
     from .nodes.Logic import Compare, Int, Float, Bool, String, IfExecute, DebugPrint, AlwaysEqualProxy
     
 except ImportError:
@@ -34,6 +40,8 @@ NODE_CLASS_MAPPINGS = {
     "CompositorConfig4-beyond_nodes": CompositorConfig4,
     "Compositor4TransformsOut-beyond_nodes": Compositor4TransformsOut,
     "Compositor4MasksOutput-beyond_nodes": Compositor4MasksOutput,
+    ### Image Nodes
+    "ImageScaleDownBy-beyond_nodes": ImageScaleDownBy,
     ### Logic Nodes
     "Compare-beyond_nodes": Compare,
     "Int-beyond_nodes": Int,
@@ -64,6 +72,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "CompositorConfig4-beyond_nodes": "🦾 Compositor Config V4 🦾",
     "Compositor4TransformsOut-beyond_nodes": "🦾 Compositor Transforms Output V4 🦾",
     "Compositor4MasksOutput-beyond_nodes": "🦾 Compositor Masks Output V4 🦾",
+    ## Image Nodes
+    "ImageScaleDownBy-beyond_nodes": "🦾 Image Scale Down By",
     ### Logic Nodes
     "Compare-beyond_nodes": "Compare 🦾",
     "Int-beyond_nodes": "Int 🦾",
