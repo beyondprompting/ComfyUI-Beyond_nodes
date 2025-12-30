@@ -8,7 +8,7 @@ except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Compositor nodes\033[0m")
 
 try:
-    from .nodes.Image import imageScaleDown, imageScaleDownBy
+    from .nodes.Image import ImageScaleDown, ImageScaleDownBy
     print("loaded Image nodes")
 except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Image nodes\033[0m")

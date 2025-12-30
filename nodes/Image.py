@@ -1,6 +1,6 @@
 from nodes import MAX_RESOLUTION
 
-class imageScaleDown:
+class ImageScaleDown:
   crop_methods = ["disabled", "center"]
 
   @classmethod
@@ -48,7 +48,7 @@ class imageScaleDown:
 
     return (torch.cat(results, dim=0),)
 
-class imageScaleDownBy(imageScaleDown):
+class ImageScaleDownBy(ImageScaleDown):
   @classmethod
   def INPUT_TYPES(s):
     return {
