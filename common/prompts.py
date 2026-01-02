@@ -1,7 +1,9 @@
 PROMPT_TEMPLATE = {
     "camera_angle": [
-        "front view"
+        "front view",
         "top-down",
+        "side view",
+        "rear view",
         "close-up",
         "medium shot",
         "wide shot",
