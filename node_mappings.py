@@ -32,6 +32,9 @@ try:
 except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Switch nodes\033[0m")
 
+try:
+    from .nodes.Prompt import Prompt
+
 
 NODE_CLASS_MAPPINGS = { 
     ### Compositor Nodes
@@ -62,6 +65,8 @@ NODE_CLASS_MAPPINGS = {
     "BooleanControlOutput-beyond_nodes": BooleanControlOutput,
     "EditMask-beyond_nodes": EditMask,
     "RoundMask-beyond_nodes": RoundMask,
+    ### Prompt Nodes
+    "Prompt-beyond_nodes": Prompt,
 
 }
 
@@ -93,5 +98,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "ImageMaskSwitch-beyond_nodes":"Image and Mask Switch 🦾",
     "BooleanControlOutput-beyond_nodes": "Boolean Control Output 🦾",
     "EditMask-beyond_nodes": "Edit Mask from image input 🦾",
-    "RoundMask-beyond_nodes": "Round Mask 🦾",    
+    "RoundMask-beyond_nodes": "Round Mask 🦾",
+    ### Prompt Nodes
+    "Prompt-beyond_nodes": "🦾 Prompt with Selectors",
 }
