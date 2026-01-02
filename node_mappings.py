@@ -35,6 +35,9 @@ except ImportError:
 try:
     from .nodes.Prompt import Prompt
 
+except ImportError:
+    print("\033[34mBeyond Nodes: \033[92mFailed loading Prompt nodes\033[0m")
+
 
 NODE_CLASS_MAPPINGS = { 
     ### Compositor Nodes
