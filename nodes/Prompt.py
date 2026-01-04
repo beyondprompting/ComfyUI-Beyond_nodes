@@ -38,7 +38,7 @@ class Prompt:
     def _append_section(base: str, selectable_name: str, value: str, sentinel: str) -> str:
         """
         Appends:
-        \n### <selectable_name> ("<selectable_name>")
+        \n### <selectable_name>
         \n<value>
         only if value != sentinel and value is non-empty.
         """
@@ -47,7 +47,7 @@ class Prompt:
             return base
 
         base = (base or "").rstrip()
-        return f'{base}\n### {selectable_name} {v}\n'# ("{selectable_name}")\n{v}'
+        return f'{base}\n### {selectable_name} {v}\n\n'# ("{selectable_name}")\n{v}'
 
     def doit(self, text, camera_angle, lighting, **kwargs):
         out = (text or "").strip()
