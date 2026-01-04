@@ -47,7 +47,7 @@ class Prompt:
             return base
 
         base = (base or "").rstrip()
-        return f'{base}\n### {v}'# ("{selectable_name}")\n{v}'
+        return f'{base}\n### {selectable_name} {v}'# ("{selectable_name}")\n{v}'
 
     def doit(self, text, camera_angle, lighting, **kwargs):
         out = (text or "").strip()
