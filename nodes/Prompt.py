@@ -47,7 +47,7 @@ class Prompt:
             return base
 
         base = (base or "").rstrip()
-        return f'{base}\n### {selectable_name} {v}'# ("{selectable_name}")\n{v}'
+        return f'{base}\n### {selectable_name} {v}\n'# ("{selectable_name}")\n{v}'
 
     def doit(self, text, camera_angle, lighting, **kwargs):
         out = (text or "").strip()
@@ -56,7 +56,7 @@ class Prompt:
         cam_sentinel = "📷 Select camera angle (optional)"
         light_sentinel = "💡 Select lighting (optional)"
 
-        out = self._append_section(out, "camera_angle: ", camera_angle, cam_sentinel)
+        out = self._append_section(out, "camera angle: ", camera_angle, cam_sentinel)
         out = self._append_section(out, "lighting: ", lighting, light_sentinel)
 
         return (out,)
