@@ -1,6 +1,5 @@
 from ..common.prompts import PROMPT_TEMPLATE
 
-
 class Prompt:
     @classmethod
     def INPUT_TYPES(cls):
@@ -17,23 +16,10 @@ class Prompt:
                     [cam_sentinel] + PROMPT_TEMPLATE.get("camera_angle", []),
                     {"default": cam_sentinel},
                 ),
-                "camera_angle_strength": (
-                    "FLOAT",
-                    {"default": 1.0, "min": 0.0, "max": 2.0, "step": 0.05},
-                ),
-
                 "lighting": (
                     [light_sentinel] + PROMPT_TEMPLATE.get("lighting", []),
                     {"default": light_sentinel},
                 ),
-                "lighting_strength": (
-                    "FLOAT",
-                    {"default": 1.0, "min": 0.0, "max": 2.0, "step": 0.05},
-                ),
-            },
-            "optional": {
-                # Optional incoming prompt text from other nodes
-                "text_in": ("STRING", {"default": "", "multiline": True}),
             },
             "hidden": {
                 "prompt": "PROMPT",
@@ -49,10 +35,10 @@ class Prompt:
 
     # --- helpers ---
     @staticmethod
-    def _append_section(base: str, selectable_name: str, value: str, sentinel: str, strength: float) -> str:
+    def _append_section(base: str, selectable_name: str, value: str, sentinel: str) -> str:
         """
         Appends:
-        \n### <selectable_name> ("<selectable_name>") [strength=<strength>]
+        \n### <selectable_name> ("<selectable_name>")
         \n<value>
         only if value != sentinel and value is non-empty.
         """
@@ -61,41 +47,16 @@ class Prompt:
             return base
 
         base = (base or "").rstrip()
-        s = float(strength)
-        return f'{base}\n### {selectable_name} ("{selectable_name}") [strength={s:g}]\n{v}'
+        return f'{base}\n### {selectable_name} ("{selectable_name}")\n{v}'
 
-    @staticmethod
-    def _append_text(base: str, extra: str) -> str:
-        """
-        Appends extra text as a new line block only if it is non-empty.
-        """
-        e = (extra or "").strip()
-        if not e:
-            return (base or "").strip()
-        base = (base or "").rstrip()
-        return f"{base}\n{e}"
-
-    def doit(
-        self,
-        text,
-        camera_angle,
-        camera_angle_strength,
-        lighting,
-        lighting_strength,
-        text_in="",
-        **kwargs
-    ):
+    def doit(self, text, camera_angle, lighting, **kwargs):
         out = (text or "").strip()
-
-        # Compose with optional incoming text
-        out = self._append_text(out, text_in)
 
         # must match the sentinel strings defined in INPUT_TYPES
         cam_sentinel = "📷 Select camera angle (optional)"
         light_sentinel = "💡 Select lighting (optional)"
 
-        # Append selected sections (only when not sentinel)
-        out = self._append_section(out, "camera_angle", camera_angle, cam_sentinel, camera_angle_strength)
-        out = self._append_section(out, "lighting", lighting, light_sentinel, lighting_strength)
+        out = self._append_section(out, "camera_angle: ", camera_angle, cam_sentinel)
+        out = self._append_section(out, "lighting: ", lighting, light_sentinel)
 
         return (out,)
