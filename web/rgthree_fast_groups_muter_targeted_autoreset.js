@@ -11,7 +11,7 @@ import { api } from "../../scripts/api.js";
  * 3) Queue a run. On success, only those targets get reset (toggled off).
  */
 
-const EXT_NAME = "Beyond_nodes-targeted_fast_groups_muter_autoreset";
+const EXT_NAME = "ComfyUI-Beyond_nodes.frontend-nodes";
 const NODE_TITLE = "Fast Groups Muter Auto-Reset (Targeted)";
 
 const instances = new Set();
