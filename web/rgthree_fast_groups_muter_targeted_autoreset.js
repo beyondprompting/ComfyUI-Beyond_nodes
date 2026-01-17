@@ -1,23 +1,67 @@
+// rgthree_fast_groups_muter_targeted_autoreset.js
+//
+// Targeted auto-reset controller node for rgthree "Fast Groups Muter" (frontend-only / virtual node).
+// - Adds a NEW node to the menu:  beyond/Fast Groups Muter Auto-Reset (Targeted)
+// - You configure target FastGroupsMuter node IDs (or click "Add selected").
+// - After execution_success, it resets ONLY those target muter nodes (turns toggles off).
+// - execution_error / execution_interrupted hooks are left in-place but commented, as requested.
+//
+// IMPORTANT:
+// This file SELF-INITS on import, so it works both:
+// - when loaded normally by ComfyUI at startup, and
+// - when dynamically imported later (Comfy will not retro-call setup()).
+//
+// Put it somewhere served by your web folder, and ensure it's imported/executed at startup (or dynamically import it).
+
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 
-import "./rgthree_fast_groups_muter_targeted_autoreset.js";
-
-/**
- * Targeted auto-reset node for rgthree "Fast Groups Muter (rgthree)".
- * Frontend-only: listens to execution events and resets only the configured target node IDs.
- *
- * How to use:
- * 1) Add "Fast Groups Muter Auto-Reset (Targeted)" to your graph.
- * 2) Select one or more Fast Groups Muter nodes, click "Add selected".
- * 3) Queue a run. On success, only those targets get reset (toggled off).
- */
-
-const EXT_NAME = "ComfyUI-Beyond_nodes.frontend-nodes";
+const EXT_NAME = "beyond.fg_muter_targeted_autoreset";
+const NODE_PATH = "beyond/Fast Groups Muter Auto-Reset (Targeted)";
 const NODE_TITLE = "Fast Groups Muter Auto-Reset (Targeted)";
 
+// ---- behavior switches ----
+const RESET_ON_SUCCESS = true;
+
+// Keep these connected but commented for later use:
+// const RESET_ON_ERROR = true;
+// const RESET_ON_INTERRUPTED = true;
+
+// ---- internal state ----
 const instances = new Set();
 let listenersInstalled = false;
+let nodeRegistered = false;
+let didInit = false;
+
+function log(...args) {
+  console.log("[FG Targeted AutoReset]", ...args);
+}
+
+function warn(...args) {
+  console.warn("[FG Targeted AutoReset]", ...args);
+}
+
+function waitFor(getter, { tries = 240, intervalMs = 50 } = {}) {
+  return new Promise((resolve, reject) => {
+    let i = 0;
+    const tick = () => {
+      try {
+        const v = getter();
+        if (v) return resolve(v);
+      } catch (e) {
+        // ignore and keep trying
+      }
+      i++;
+      if (i >= tries) return reject(new Error("Timed out waiting for dependency"));
+      setTimeout(tick, intervalMs);
+    };
+    tick();
+  });
+}
+
+function getLiteGraph() {
+  return globalThis.LiteGraph || window.LiteGraph;
+}
 
 function getCurrentGraph() {
   return app?.canvas?.getCurrentGraph?.() || app?.graph;
@@ -26,10 +70,10 @@ function getCurrentGraph() {
 function parseIds(raw) {
   return String(raw || "")
     .split(",")
-    .map(s => s.trim())
+    .map((s) => s.trim())
     .filter(Boolean)
-    .map(s => Number(s))
-    .filter(n => Number.isFinite(n));
+    .map((s) => Number(s))
+    .filter((n) => Number.isFinite(n));
 }
 
 function formatIds(ids) {
@@ -37,37 +81,67 @@ function formatIds(ids) {
 }
 
 function isLikelyFastGroupsMuter(node) {
+  // We avoid hardcoding rgthree internal class names so this remains robust.
+  // Heuristics:
+  // 1) title/type includes "fast groups"
+  // 2) it has at least one widget with doModeChange() (rgthree FastGroupsToggleRowWidget-like)
   if (!node) return false;
-
-  // Most rgthree nodes use " (rgthree)" in the title/type, and this one contains "Fast Groups".
   const t = String(node.type ?? node.title ?? "").toLowerCase();
   if (!t.includes("fast groups")) return false;
 
-  // The toggle widgets rgthree uses have doModeChange().
   const ws = node.widgets;
   if (!Array.isArray(ws) || ws.length === 0) return false;
-  return ws.some(w => typeof w?.doModeChange === "function");
+
+  return ws.some((w) => typeof w?.doModeChange === "function");
 }
 
-function resetTargetNode(node) {
+function getSelectedNodes() {
+  const graph = getCurrentGraph();
+
+  // Selection storage differs across builds; try the common ones.
+  const sel =
+    graph?.list_of_graphcanvas?.[0]?.selected_nodes ||
+    app?.canvas?.selected_nodes ||
+    graph?.selected_nodes;
+
+  if (sel && typeof sel === "object") {
+    return Object.values(sel);
+  }
+
+  // Fallback heuristic
+  return (graph?._nodes || []).filter((n) => n?.isSelected);
+}
+
+function resetMuterNode(node) {
   if (!node) return false;
 
-  // Force any rgthree toggle-row widget to off.
   let changed = false;
   const ws = node.widgets || [];
+
   for (const w of ws) {
     if (typeof w?.doModeChange === "function") {
-      // rgthree: doModeChange(force, skipOtherNodeCheck)
-      w.doModeChange(false, true);
-      changed = true;
+      // rgthree toggle widgets: doModeChange(force, skipOtherNodeCheck)
+      // Force OFF, skip "only-one"/"always-one" enforcement.
+      try {
+        w.doModeChange(false, true);
+        changed = true;
+      } catch (e) {
+        // If rgthree changes signature, we fail gracefully.
+        warn("Failed calling doModeChange on widget", e);
+      }
     }
   }
 
   if (changed) {
-    node.setDirtyCanvas?.(true, true);
-    node.graph?.setDirtyCanvas?.(true, true);
-    app.graph?.setDirtyCanvas?.(true, true);
+    try {
+      node.setDirtyCanvas?.(true, true);
+      node.graph?.setDirtyCanvas?.(true, true);
+      app.graph?.setDirtyCanvas?.(true, true);
+    } catch {
+      // ignore UI refresh failures
+    }
   }
+
   return changed;
 }
 
@@ -81,37 +155,31 @@ function resetTargetsForInstance(inst) {
   for (const id of ids) {
     const node = graph.getNodeById?.(id);
     if (!node) continue;
-    resetTargetNode(node);
+    resetMuterNode(node);
   }
 }
 
 function resetAllInstances() {
-  for (const inst of instances) resetTargetsForInstance(inst);
+  for (const inst of instances) {
+    resetTargetsForInstance(inst);
+  }
 }
 
 function installListenersOnce() {
   if (listenersInstalled) return;
   listenersInstalled = true;
 
-  api.addEventListener("execution_success", resetAllInstances);
+  if (RESET_ON_SUCCESS) {
+    api.addEventListener("execution_success", resetAllInstances);
+  }
 
-  // --- keep these connected but commented for later ---
-  // api.addEventListener("execution_error", resetAllInstances);
-  // api.addEventListener("execution_interrupted", resetAllInstances);
-}
-
-function getSelectedNodes() {
-  // LiteGraph selection shape varies; this is the safest common path:
-  const graph = getCurrentGraph();
-  const sel = graph?.list_of_graphcanvas?.[0]?.selected_nodes
-           || app?.canvas?.selected_nodes
-           || graph?.selected_nodes;
-
-  if (sel && typeof sel === "object") return Object.values(sel);
-
-  // Fallback: scan nodes and pick "isSelected" if present
-  const nodes = graph?._nodes || [];
-  return nodes.filter(n => n?.isSelected);
+  // Keep these ready but commented for later use:
+  // if (RESET_ON_ERROR) {
+  //   api.addEventListener("execution_error", resetAllInstances);
+  // }
+  // if (RESET_ON_INTERRUPTED) {
+  //   api.addEventListener("execution_interrupted", resetAllInstances);
+  // }
 }
 
 function addSelectedTargetsToInstance(inst) {
@@ -119,42 +187,67 @@ function addSelectedTargetsToInstance(inst) {
   const muters = selected.filter(isLikelyFastGroupsMuter);
 
   const current = parseIds(inst.__targetIdsWidget?.value);
-  const next = current.concat(muters.map(n => n.id));
+  const next = current.concat(muters.map((n) => n.id));
 
   inst.__targetIdsWidget.value = formatIds(next);
-  inst.setDirtyCanvas?.(true, true);
+
+  try {
+    inst.setDirtyCanvas?.(true, true);
+  } catch {
+    // ignore
+  }
 }
 
 function clearTargets(inst) {
   inst.__targetIdsWidget.value = "";
-  inst.setDirtyCanvas?.(true, true);
+  try {
+    inst.setDirtyCanvas?.(true, true);
+  } catch {
+    // ignore
+  }
 }
 
 function resetNow(inst) {
   resetTargetsForInstance(inst);
 }
 
-function registerNode() {
+async function registerNodeType() {
+  if (nodeRegistered) return;
+
+  const LiteGraph = await waitFor(() => getLiteGraph(), { tries: 240, intervalMs: 50 });
+
+  // Ensure registerNodeType exists
+  await waitFor(() => typeof LiteGraph?.registerNodeType === "function", { tries: 240, intervalMs: 50 });
+
+  // If already registered, do nothing.
+  if (LiteGraph.registered_node_types?.[NODE_PATH]) {
+    nodeRegistered = true;
+    return;
+  }
+
   class TargetedAutoResetNode extends LiteGraph.LGraphNode {
     constructor() {
       super();
       this.title = NODE_TITLE;
-      this.size = [360, 140];
+      this.size = [420, 170];
 
-      // Widget: target ids
+      // A text widget storing comma-separated target node IDs
       this.__targetIdsWidget = this.addWidget(
         "text",
         "target_ids (comma-separated node ids)",
         "",
-        (v) => { this.__targetIdsWidget.value = v; }
+        (v) => {
+          // normalize on edit (optional)
+          const ids = parseIds(v);
+          this.__targetIdsWidget.value = ids.length ? formatIds(ids) : "";
+        }
       );
 
-      // Controls
-      this.addWidget("button", "Add selected", "", () => addSelectedTargetsToInstance(this));
-      this.addWidget("button", "Clear", "", () => clearTargets(this));
+      this.addWidget("button", "Add selected FastGroupsMuter", "", () => addSelectedTargetsToInstance(this));
+      this.addWidget("button", "Clear targets", "", () => clearTargets(this));
       this.addWidget("button", "Reset now", "", () => resetNow(this));
 
-      // Optional: no inputs/outputs needed; it’s a controller node
+      // No inputs/outputs required; controller node only.
     }
 
     onAdded() {
@@ -167,13 +260,32 @@ function registerNode() {
     }
   }
 
-  LiteGraph.registerNodeType(`${EXT_NAME}/TargetedMuterAutoReset`, TargetedAutoResetNode);
+  LiteGraph.registerNodeType(NODE_PATH, TargetedAutoResetNode);
+  nodeRegistered = true;
+  log("Registered node:", NODE_PATH);
 }
 
+async function initNow() {
+  if (didInit) return;
+  didInit = true;
+
+  try {
+    installListenersOnce();
+    await registerNodeType();
+  } catch (e) {
+    // Never throw (prevents breaking other extensions)
+    warn("Init failed:", e);
+  }
+}
+
+// Normal Comfy path: Comfy calls setup() during boot for discovered extensions
 app.registerExtension({
   name: EXT_NAME,
   setup() {
-    registerNode();
-    installListenersOnce();
+    // If loaded at boot, setup will run
+    initNow();
   },
 });
+
+// Late-load path: if you dynamically import this file, Comfy won't retro-call setup().
+initNow();
