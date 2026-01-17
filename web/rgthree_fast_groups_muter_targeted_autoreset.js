@@ -1,6 +1,8 @@
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 
+import "./rgthree_fast_groups_muter_targeted_autoreset.js";
+
 /**
  * Targeted auto-reset node for rgthree "Fast Groups Muter (rgthree)".
  * Frontend-only: listens to execution events and resets only the configured target node IDs.
