@@ -16,8 +16,8 @@
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 
-const EXT_NAME = "beyond.fg_muter_targeted_autoreset";
-const NODE_PATH = "beyond/Fast Groups Muter Auto-Reset (Targeted)";
+const EXT_NAME = "Beyond_nodes.fg_muter_targeted_autoreset";
+const NODE_PATH = "Beyond_nodes/Fast Groups Muter Auto-Reset (Targeted)";
 const NODE_TITLE = "Fast Groups Muter Auto-Reset (Targeted)";
 
 // ---- behavior switches ----
