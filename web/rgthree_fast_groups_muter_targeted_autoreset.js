@@ -1,40 +1,32 @@
-// rgthree_fast_groups_muter_targeted_autoreset.js
+// beyond_fg_muter_autoreset_by_group.js
 //
 // Frontend-only (VIRTUAL) controller node.
-// Resets ONLY the configured rgthree Fast Groups Muter nodes after a successful run.
+// After execution_success, it turns OFF only the Fast Groups Muter toggles whose group.title matches your list.
 //
-// IMPORTANT:
-// - This node MUST be virtual, otherwise ComfyUI will try to serialize it into the prompt and throw:
-//   "node is missing the class_type property"
-// - Therefore we set: isVirtualNode = true (and mode = LiteGraph.NEVER).
-//
-// Usage:
-// 1) Add node: beyond/Fast Groups Muter Auto-Reset (Targeted)
-// 2) Select one or more Fast Groups Muter nodes, click "Add selected"
-// 3) Queue a run; on execution_success it will reset those targets (toggle off)
+// Why this works:
+// - rgthree creates one widget per group, with widget.group.title and label `Enable ${group.title}` :contentReference[oaicite:2]{index=2}
+// - The widget has doModeChange(force, skipOtherNodeCheck) that actually changes the modes of the group nodes :contentReference[oaicite:3]{index=3}
+// - We call doModeChange(false, true) only for matched group titles => only those switches reset.
 
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 
-const EXT_NAME = "Beyond_nodes.fg_muter_targeted_autoreset";
-const NODE_PATH = "Fast Groups Muter Auto-Reset (Targeted) -Beyond_nodes";
-const NODE_TITLE = "Fast Groups Muter Auto-Reset (Targeted)";
+const EXT_NAME = "beyond.fg_muter_autoreset_by_group";
+const NODE_PATH = "beyond/Fast Groups Muter Auto-Reset (By Group)";
+const NODE_TITLE = "FG Muter Auto-Reset (By Group)";
 
-// --- behavior ---
+// Only success by default (same rationale as before)
 const RESET_ON_SUCCESS = true;
+// Leave these ready for later:
+// const RESET_ON_ERROR = false;
+// const RESET_ON_INTERRUPTED = false;
 
-// leave connected but commented for later:
-// const RESET_ON_ERROR = true;
-// const RESET_ON_INTERRUPTED = true;
-
-// --- internal ---
 const instances = new Set();
 let listenersInstalled = false;
-let nodeRegistered = false;
 let didInit = false;
 
-function log(...a) { console.log("[FG Targeted AutoReset]", ...a); }
-function warn(...a) { console.warn("[FG Targeted AutoReset]", ...a); }
+function log(...a) { console.log("[FG AutoReset By Group]", ...a); }
+function warn(...a) { console.warn("[FG AutoReset By Group]", ...a); }
 
 function waitFor(getter, { tries = 240, intervalMs = 50 } = {}) {
   return new Promise((resolve, reject) => {
@@ -72,13 +64,52 @@ function formatIds(ids) {
   return [...new Set(ids)].sort((a, b) => a - b).join(", ");
 }
 
-function isLikelyFastGroupsMuter(node) {
-  // Heuristic: title/type contains "fast groups" AND has widget(s) with doModeChange()
+function parseGroupList(raw) {
+  // accepts commas and/or newlines
+  return String(raw || "")
+    .split(/[\n,]/g)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function matchesTitle(title, patterns, mode) {
+  const t = String(title || "");
+  if (!t || !patterns.length) return false;
+
+  if (mode === "exact") {
+    const tl = t.toLowerCase();
+    return patterns.some(p => tl === String(p).toLowerCase());
+  }
+
+  if (mode === "contains") {
+    const tl = t.toLowerCase();
+    return patterns.some(p => tl.includes(String(p).toLowerCase()));
+  }
+
+  if (mode === "startswith") {
+    const tl = t.toLowerCase();
+    return patterns.some(p => tl.startsWith(String(p).toLowerCase()));
+  }
+
+  // regex
+  for (const p of patterns) {
+    try {
+      const re = new RegExp(p, "i");
+      if (re.test(t)) return true;
+    } catch {
+      // ignore bad regex entries
+    }
+  }
+  return false;
+}
+
+function isFastGroupsMuterNode(node) {
   if (!node) return false;
-  const t = String(node.type ?? node.title ?? "").toLowerCase();
-  if (!t.includes("fast groups")) return false;
   const ws = node.widgets;
-  return Array.isArray(ws) && ws.some(w => typeof w?.doModeChange === "function");
+  if (!Array.isArray(ws) || !ws.length) return false;
+
+  // rgthree toggle-row widget has name "RGTHREE_TOGGLE_AND_NAV" :contentReference[oaicite:4]{index=4}
+  return ws.some(w => w?.name === "RGTHREE_TOGGLE_AND_NAV" && w?.group && typeof w.group.title === "string");
 }
 
 function getSelectedNodes() {
@@ -92,19 +123,53 @@ function getSelectedNodes() {
   return (graph?._nodes || []).filter(n => n?.isSelected);
 }
 
-function resetMuterNode(node) {
-  if (!node) return false;
+function addSelectedTargetsToInstance(inst) {
+  const selected = getSelectedNodes();
+  const muters = selected.filter(isFastGroupsMuterNode);
+
+  const current = parseIds(inst.__targetIdsWidget?.value);
+  const next = current.concat(muters.map(n => n.id));
+
+  inst.__targetIdsWidget.value = formatIds(next);
+  try { inst.setDirtyCanvas?.(true, true); } catch {}
+}
+
+function clearTargets(inst) {
+  inst.__targetIdsWidget.value = "";
+  try { inst.setDirtyCanvas?.(true, true); } catch {}
+}
+
+/**
+ * This is the key: ONLY reset widgets whose group.title matches your patterns.
+ * And we reset them "properly" by calling doModeChange(false, true) so the group nodes modes flip back. :contentReference[oaicite:5]{index=5}
+ */
+function resetMuterNodeByGroup(node, patterns, matchMode, onlyIfOn = true) {
+  if (!node || !Array.isArray(node.widgets)) return false;
 
   let changed = false;
-  for (const w of (node.widgets || [])) {
-    if (typeof w?.doModeChange === "function") {
-      try {
-        // force off; skip "only one"/"always one" constraints
+
+  for (const w of node.widgets) {
+    if (w?.name !== "RGTHREE_TOGGLE_AND_NAV") continue;
+
+    const groupTitle = w?.group?.title;
+    if (!matchesTitle(groupTitle, patterns, matchMode)) continue;
+
+    const isOn = (typeof w.toggled === "boolean") ? w.toggled : (w?.value?.toggled === true);
+    if (onlyIfOn && !isOn) continue;
+
+    try {
+      // doModeChange(force=false, skipOtherNodeCheck=true)
+      // skipOtherNodeCheck avoids the "max one / always one" logic affecting other widgets. :contentReference[oaicite:6]{index=6}
+      if (typeof w.doModeChange === "function") {
         w.doModeChange(false, true);
-        changed = true;
-      } catch (e) {
-        warn("doModeChange failed", e);
+      } else {
+        // fallback: keep UI consistent if rgthree changes internals
+        if (w.value && typeof w.value === "object") w.value.toggled = false;
+        if ("toggled" in w) w.toggled = false;
       }
+      changed = true;
+    } catch (e) {
+      warn("Failed resetting widget for group:", groupTitle, e);
     }
   }
 
@@ -115,6 +180,7 @@ function resetMuterNode(node) {
       app.graph?.setDirtyCanvas?.(true, true);
     } catch {}
   }
+
   return changed;
 }
 
@@ -125,9 +191,15 @@ function resetTargetsForInstance(inst) {
   const ids = parseIds(inst.__targetIdsWidget?.value);
   if (!ids.length) return;
 
+  const patterns = parseGroupList(inst.__groupNamesWidget?.value);
+  if (!patterns.length) return;
+
+  const matchMode = inst.__matchModeWidget?.value || "exact";
+  const onlyIfOn = inst.__onlyIfOnWidget?.value !== false;
+
   for (const id of ids) {
     const node = graph.getNodeById?.(id);
-    if (node) resetMuterNode(node);
+    if (node) resetMuterNodeByGroup(node, patterns, matchMode, onlyIfOn);
   }
 }
 
@@ -143,61 +215,32 @@ function installListenersOnce() {
     api.addEventListener("execution_success", resetAllInstances);
   }
 
-  // leave for later:
+  // leave wired but off:
   // api.addEventListener("execution_error", resetAllInstances);
   // api.addEventListener("execution_interrupted", resetAllInstances);
 }
 
-function addSelectedTargetsToInstance(inst) {
-  const selected = getSelectedNodes();
-  const muters = selected.filter(isLikelyFastGroupsMuter);
-
-  const current = parseIds(inst.__targetIdsWidget?.value);
-  const next = current.concat(muters.map(n => n.id));
-
-  inst.__targetIdsWidget.value = formatIds(next);
-  try { inst.setDirtyCanvas?.(true, true); } catch {}
-}
-
-function clearTargets(inst) {
-  inst.__targetIdsWidget.value = "";
-  try { inst.setDirtyCanvas?.(true, true); } catch {}
-}
-
-function resetNow(inst) {
-  resetTargetsForInstance(inst);
-}
-
 async function registerNodeType() {
-  if (nodeRegistered) return;
-
   const LiteGraph = await waitFor(() => getLiteGraph(), { tries: 240, intervalMs: 50 });
   await waitFor(() => typeof LiteGraph?.registerNodeType === "function", { tries: 240, intervalMs: 50 });
 
-  if (LiteGraph.registered_node_types?.[NODE_PATH]) {
-    nodeRegistered = true;
-    return;
-  }
+  if (LiteGraph.registered_node_types?.[NODE_PATH]) return;
 
-  class TargetedAutoResetNode extends LiteGraph.LGraphNode {
+  class FGMuteAutoResetByGroup extends LiteGraph.LGraphNode {
     constructor() {
       super();
 
-      // ---- CRITICAL: mark as virtual so ComfyUI does NOT include it in prompt ----
+      // VIRTUAL: not serialized to backend prompt
       this.isVirtualNode = true;
       this.serialize_widgets = false;
-
-      // Optional: keep LiteGraph from treating it like an executable node
-      try {
-        this.mode = LiteGraph.NEVER;
-      } catch {}
+      try { this.mode = LiteGraph.NEVER; } catch {}
 
       this.title = NODE_TITLE;
-      this.size = [440, 175];
+      this.size = [560, 240];
 
       this.__targetIdsWidget = this.addWidget(
         "text",
-        "target_ids (comma-separated node ids)",
+        "target_muter_node_ids (comma-separated)",
         "",
         (v) => {
           const ids = parseIds(v);
@@ -205,12 +248,33 @@ async function registerNodeType() {
         }
       );
 
-      this.addWidget("button", "Add selected FastGroupsMuter", "", () => addSelectedTargetsToInstance(this));
+      this.__groupNamesWidget = this.addWidget(
+        "text",
+        "group titles (comma or newline separated)",
+        "",
+        () => {}
+      );
+
+      this.__matchModeWidget = this.addWidget(
+        "combo",
+        "match mode",
+        "exact",
+        () => {},
+        { values: ["exact", "contains", "startswith", "regex"] }
+      );
+
+      this.__onlyIfOnWidget = this.addWidget(
+        "toggle",
+        "only reset if ON",
+        true,
+        () => {}
+      );
+
+      this.addWidget("button", "Add selected Fast Groups Muter", "", () => addSelectedTargetsToInstance(this));
       this.addWidget("button", "Clear targets", "", () => clearTargets(this));
-      this.addWidget("button", "Reset now", "", () => resetNow(this));
+      this.addWidget("button", "Reset now (by group)", "", () => resetTargetsForInstance(this));
     }
 
-    // Extra safety: some builds consult this for serialization
     isVirtual() { return true; }
 
     onAdded() {
@@ -222,15 +286,13 @@ async function registerNodeType() {
       instances.delete(this);
     }
 
-    // Extra safety: ensure serialization doesn’t add anything backend-relevant
     onSerialize(o) {
       o.isVirtualNode = true;
       o.serialize_widgets = false;
     }
   }
 
-  LiteGraph.registerNodeType(NODE_PATH, TargetedAutoResetNode);
-  nodeRegistered = true;
+  LiteGraph.registerNodeType(NODE_PATH, FGMuteAutoResetByGroup);
   log("Registered node:", NODE_PATH);
 }
 
@@ -253,5 +315,5 @@ app.registerExtension({
   },
 });
 
-// Late-load (dynamic import) path:
+// late-load safe
 initNow();
