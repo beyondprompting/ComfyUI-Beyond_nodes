@@ -38,6 +38,12 @@ try:
 except ImportError:
     print("\033[34mBeyond Nodes: \033[92mFailed loading Prompt nodes\033[0m")
 
+try:
+    from .nodes.Util import UUIDFilename
+
+except ImportError:
+    print("\033[34mBeyond Nodes: \033[92mFailed loading Util nodes\033[0m")
+
 
 NODE_CLASS_MAPPINGS = { 
     ### Compositor Nodes
@@ -71,6 +77,8 @@ NODE_CLASS_MAPPINGS = {
     ### Prompt Nodes
     "Prompt-beyond_nodes": Prompt,
 
+    ### Util Nodes
+    "UUID": UUIDFilename,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -104,4 +112,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "RoundMask-beyond_nodes": "Round Mask 🦾",
     ### Prompt Nodes
     "Prompt-beyond_nodes": "🦾 Prompt with Selectors",
+    ### Util Nodes
+    "UUID": "🦾 UUID with date",
 }

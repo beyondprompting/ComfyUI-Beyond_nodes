@@ -11,9 +11,9 @@
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 
-const EXT_NAME = "beyond.fg_muter_autoreset_by_group";
-const NODE_PATH = "beyond/Fast Groups Muter Auto-Reset (By Group)";
-const NODE_TITLE = "FG Muter Auto-Reset (By Group)";
+const EXT_NAME = "Beyond_nodes.fg_muter_autoreset_by_group";
+const NODE_PATH = "Group Muter Auto Reset - Beyond nodes";
+const NODE_TITLE = "Group Muter Auto-Reset (By Group)";
 
 // Only success by default (same rationale as before)
 const RESET_ON_SUCCESS = true;
