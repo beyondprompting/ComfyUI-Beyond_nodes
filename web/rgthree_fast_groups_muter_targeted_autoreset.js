@@ -3,9 +3,14 @@
 // Frontend-only (VIRTUAL) controller node.
 // After execution_success, it turns OFF only the Fast Groups Muter toggles whose group.title matches your list.
 //
+// Persistence note (IMPORTANT):
+// - We keep `serialize_widgets = false` to avoid prompt/pipeline issues for virtual nodes.
+// - Therefore, we persist config in `this.properties` (which *is* saved in the workflow JSON).
+// - On load, we restore widget values from `this.properties` via onConfigure().
+//
 // Why this works:
-// - rgthree creates one widget per group, with widget.group.title and label `Enable ${group.title}` :contentReference[oaicite:2]{index=2}
-// - The widget has doModeChange(force, skipOtherNodeCheck) that actually changes the modes of the group nodes :contentReference[oaicite:3]{index=3}
+// - rgthree creates one widget per group, with widget.group.title and label `Enable ${group.title}`
+// - The widget has doModeChange(force, skipOtherNodeCheck) that actually changes the modes of the group nodes
 // - We call doModeChange(false, true) only for matched group titles => only those switches reset.
 
 import { app } from "../../scripts/app.js";
@@ -108,7 +113,7 @@ function isFastGroupsMuterNode(node) {
   const ws = node.widgets;
   if (!Array.isArray(ws) || !ws.length) return false;
 
-  // rgthree toggle-row widget has name "RGTHREE_TOGGLE_AND_NAV" :contentReference[oaicite:4]{index=4}
+  // rgthree toggle-row widget has name "RGTHREE_TOGGLE_AND_NAV"
   return ws.some(w => w?.name === "RGTHREE_TOGGLE_AND_NAV" && w?.group && typeof w.group.title === "string");
 }
 
@@ -123,6 +128,53 @@ function getSelectedNodes() {
   return (graph?._nodes || []).filter(n => n?.isSelected);
 }
 
+// ---- Persistence helpers ----
+
+const PROP_KEYS = Object.freeze({
+  targetIds: "target_muter_node_ids",
+  groupTitles: "group_titles",
+  matchMode: "match_mode",
+  onlyIfOn: "only_reset_if_on",
+});
+
+function ensureDefaultProperties(inst) {
+  inst.properties = inst.properties || {};
+  if (typeof inst.properties[PROP_KEYS.targetIds] !== "string") inst.properties[PROP_KEYS.targetIds] = "";
+  if (typeof inst.properties[PROP_KEYS.groupTitles] !== "string") inst.properties[PROP_KEYS.groupTitles] = "";
+  if (typeof inst.properties[PROP_KEYS.matchMode] !== "string") inst.properties[PROP_KEYS.matchMode] = "exact";
+  if (typeof inst.properties[PROP_KEYS.onlyIfOn] !== "boolean") inst.properties[PROP_KEYS.onlyIfOn] = true;
+}
+
+function persistFromWidgets(inst) {
+  // store widget state into properties so it survives workflow save/load
+  try {
+    ensureDefaultProperties(inst);
+    inst.properties[PROP_KEYS.targetIds] = String(inst.__targetIdsWidget?.value ?? "");
+    inst.properties[PROP_KEYS.groupTitles] = String(inst.__groupNamesWidget?.value ?? "");
+    inst.properties[PROP_KEYS.matchMode] = String(inst.__matchModeWidget?.value ?? "exact");
+    inst.properties[PROP_KEYS.onlyIfOn] = inst.__onlyIfOnWidget?.value !== false;
+  } catch (e) {
+    warn("persistFromWidgets failed", e);
+  }
+}
+
+function restoreToWidgets(inst) {
+  // restore widget UI from properties (called on load/configure)
+  try {
+    ensureDefaultProperties(inst);
+    if (inst.__targetIdsWidget) inst.__targetIdsWidget.value = String(inst.properties[PROP_KEYS.targetIds] ?? "");
+    if (inst.__groupNamesWidget) inst.__groupNamesWidget.value = String(inst.properties[PROP_KEYS.groupTitles] ?? "");
+    if (inst.__matchModeWidget) inst.__matchModeWidget.value = String(inst.properties[PROP_KEYS.matchMode] ?? "exact");
+    if (inst.__onlyIfOnWidget) inst.__onlyIfOnWidget.value = inst.properties[PROP_KEYS.onlyIfOn] !== false;
+
+    inst.setDirtyCanvas?.(true, true);
+  } catch (e) {
+    warn("restoreToWidgets failed", e);
+  }
+}
+
+// ---- existing behavior ----
+
 function addSelectedTargetsToInstance(inst) {
   const selected = getSelectedNodes();
   const muters = selected.filter(isFastGroupsMuterNode);
@@ -131,17 +183,19 @@ function addSelectedTargetsToInstance(inst) {
   const next = current.concat(muters.map(n => n.id));
 
   inst.__targetIdsWidget.value = formatIds(next);
+  persistFromWidgets(inst);
   try { inst.setDirtyCanvas?.(true, true); } catch {}
 }
 
 function clearTargets(inst) {
   inst.__targetIdsWidget.value = "";
+  persistFromWidgets(inst);
   try { inst.setDirtyCanvas?.(true, true); } catch {}
 }
 
 /**
  * This is the key: ONLY reset widgets whose group.title matches your patterns.
- * And we reset them "properly" by calling doModeChange(false, true) so the group nodes modes flip back. :contentReference[oaicite:5]{index=5}
+ * And we reset them "properly" by calling doModeChange(false, true) so the group nodes modes flip back.
  */
 function resetMuterNodeByGroup(node, patterns, matchMode, onlyIfOn = true) {
   if (!node || !Array.isArray(node.widgets)) return false;
@@ -159,7 +213,7 @@ function resetMuterNodeByGroup(node, patterns, matchMode, onlyIfOn = true) {
 
     try {
       // doModeChange(force=false, skipOtherNodeCheck=true)
-      // skipOtherNodeCheck avoids the "max one / always one" logic affecting other widgets. :contentReference[oaicite:6]{index=6}
+      // skipOtherNodeCheck avoids the "max one / always one" logic affecting other widgets.
       if (typeof w.doModeChange === "function") {
         w.doModeChange(false, true);
       } else {
@@ -235,44 +289,64 @@ async function registerNodeType() {
       this.serialize_widgets = false;
       try { this.mode = LiteGraph.NEVER; } catch {}
 
+      // --- PERSISTENT CONFIG STORAGE ---
+      ensureDefaultProperties(this);
+
       this.title = NODE_TITLE;
       this.size = [560, 240];
 
       this.__targetIdsWidget = this.addWidget(
         "text",
         "target_muter_node_ids (comma-separated)",
-        "",
+        this.properties[PROP_KEYS.targetIds],
         (v) => {
           const ids = parseIds(v);
-          this.__targetIdsWidget.value = ids.length ? formatIds(ids) : "";
+          const normalized = ids.length ? formatIds(ids) : "";
+          this.__targetIdsWidget.value = normalized;
+          this.properties[PROP_KEYS.targetIds] = normalized;
         }
       );
 
       this.__groupNamesWidget = this.addWidget(
         "text",
         "group titles (comma or newline separated)",
-        "",
-        () => {}
+        this.properties[PROP_KEYS.groupTitles],
+        (v) => {
+          const val = String(v ?? "");
+          this.__groupNamesWidget.value = val;
+          this.properties[PROP_KEYS.groupTitles] = val;
+        }
       );
 
       this.__matchModeWidget = this.addWidget(
         "combo",
         "match mode",
-        "exact",
-        () => {},
+        this.properties[PROP_KEYS.matchMode],
+        (v) => {
+          const val = String(v ?? "exact");
+          this.__matchModeWidget.value = val;
+          this.properties[PROP_KEYS.matchMode] = val;
+        },
         { values: ["exact", "contains", "startswith", "regex"] }
       );
 
       this.__onlyIfOnWidget = this.addWidget(
         "toggle",
         "only reset if ON",
-        true,
-        () => {}
+        this.properties[PROP_KEYS.onlyIfOn],
+        (v) => {
+          const val = v !== false;
+          this.__onlyIfOnWidget.value = val;
+          this.properties[PROP_KEYS.onlyIfOn] = val;
+        }
       );
 
       this.addWidget("button", "Add selected Fast Groups Muter", "", () => addSelectedTargetsToInstance(this));
       this.addWidget("button", "Clear targets", "", () => clearTargets(this));
       this.addWidget("button", "Reset now (by group)", "", () => resetTargetsForInstance(this));
+
+      // Make sure widgets reflect persisted values even on weird load orders
+      restoreToWidgets(this);
     }
 
     isVirtual() { return true; }
@@ -280,6 +354,8 @@ async function registerNodeType() {
     onAdded() {
       instances.add(this);
       installListenersOnce();
+      // In case onAdded happens after properties were configured
+      restoreToWidgets(this);
     }
 
     onRemoved() {
@@ -287,8 +363,18 @@ async function registerNodeType() {
     }
 
     onSerialize(o) {
+      // Keep virtual flags (but properties will still be saved by ComfyUI)
       o.isVirtualNode = true;
       o.serialize_widgets = false;
+    }
+
+    onConfigure(info) {
+      // Called when loading from workflow JSON
+      ensureDefaultProperties(this);
+      // If Comfy loaded properties into this.properties, reflect them in widgets
+      restoreToWidgets(this);
+      instances.add(this);
+      installListenersOnce();
     }
   }
 
