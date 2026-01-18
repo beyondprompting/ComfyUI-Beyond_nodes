@@ -18,7 +18,7 @@ import { api } from "../../scripts/api.js";
 
 const EXT_NAME = "Beyond_nodes.fg_muter_autoreset_by_group";
 const NODE_PATH = "Group Muter Auto Reset - Beyond nodes";
-const NODE_TITLE = "Group Muter Auto-Reset (By Group)";
+const NODE_TITLE = "🦾 Group Muter Auto-Reset (By Group)";
 
 // Only success by default (same rationale as before)
 const RESET_ON_SUCCESS = true;
@@ -30,8 +30,8 @@ const instances = new Set();
 let listenersInstalled = false;
 let didInit = false;
 
-function log(...a) { console.log("[FG AutoReset By Group]", ...a); }
-function warn(...a) { console.warn("[FG AutoReset By Group]", ...a); }
+function log(...a) { console.log("[Beyond Nodes AutoReset By Group]", ...a); }
+function warn(...a) { console.warn("[Beyond Nodes AutoReset By Group]", ...a); }
 
 function waitFor(getter, { tries = 240, intervalMs = 50 } = {}) {
   return new Promise((resolve, reject) => {
