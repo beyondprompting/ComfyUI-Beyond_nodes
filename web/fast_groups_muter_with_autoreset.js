@@ -10,7 +10,7 @@ const PROPERTY_SHOW_ALL_GRAPHS = "showAllGraphs";
 const PROPERTY_RESTRICTION = "toggleRestriction";
 const PROPERTY_AUTO_RESET_GROUP_NAME = "autoResetGroupName"; // comma/newline-separated, partial match (contains)
 
-const NODE_TYPE = "Beyond Fast Groups Muter With Autoreset";
+const NODE_TYPE = "🦾 Fast Groups Muter With Autoreset";
 
 // ------------------------ group/node helpers ------------------------
 
@@ -18,7 +18,7 @@ function getGroupNodes(group) {
   try {
     group.recomputeInsideNodes?.();
   } catch (e) {
-    console.warn("[FGM] group.recomputeInsideNodes failed:", e);
+    console.warn("[Beyond FGM] group.recomputeInsideNodes failed:", e);
   }
 
   if (Array.isArray(group.nodes) && group.nodes.length) return group.nodes;
@@ -158,7 +158,7 @@ class FastGroupsService {
       try {
         node.refreshWidgets();
       } catch (e) {
-        console.warn("[FGM] refreshWidgets failed:", e);
+        console.warn("[Beyond FGM] refreshWidgets failed:", e);
       }
     }
     this.clearScheduledRun();
@@ -568,7 +568,7 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
     this.debouncerTempWidth = 0;
     this.tempSize = null;
     this.serialize_widgets = false;
-    this.helpActions = "mute and unmute";
+    this.helpActions = "activate and deactivate";
 
     this.widgets = this.widgets || [];
     this.properties = this.properties || {};
@@ -614,7 +614,7 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
     try {
       this.resetAutoResetGroups();
     } catch (e) {
-      console.warn("[FGM] resetAutoResetGroups failed:", e);
+      console.warn("[Beyond FGM] resetAutoResetGroups failed:", e);
     }
   }
 
@@ -785,7 +785,7 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
 
   getHelp() {
     return `
-      <p>The ${this.type || "Fast Groups Muter With Autoreset"} is an input-less node that automatically collects all groups in your current
+      <p>The ${this.type || "Beyond Fast Groups Muter With Autoreset"} is an input-less node that automatically collects all groups in your current
       workflow and allows you to quickly ${this.helpActions} all nodes within the group.</p>
       <ul>
         <li><p><strong>Properties.</strong></p>
@@ -797,7 +797,7 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
             <li><p><code>${PROPERTY_SORT}</code> - position | alphanumeric | custom alphabet. <i>(default: position)</i></p></li>
             <li><p><code>${PROPERTY_SORT_CUSTOM_ALPHA}</code> - custom alphabet value.</p></li>
             <li><p><code>${PROPERTY_RESTRICTION}</code> - default | max one | always one.</p></li>
-            <li><p><code>${PROPERTY_AUTO_RESET_GROUP_NAME}</code> - NEW: comma/newline-separated substrings. If group title contains any token, it is forced OFF after execution.</p></li>
+            <li><p><code>${PROPERTY_AUTO_RESET_GROUP_NAME}</code> - comma/newline-separated substrings. If group title contains any token, it is forced OFF after execution.</p></li>
           </ul>
         </li>
       </ul>`;
