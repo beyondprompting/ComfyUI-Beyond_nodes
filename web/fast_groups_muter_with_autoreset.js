@@ -8,28 +8,24 @@ const PROPERTY_MATCH_TITLE = "matchTitle";
 const PROPERTY_SHOW_NAV = "showNav";
 const PROPERTY_SHOW_ALL_GRAPHS = "showAllGraphs";
 const PROPERTY_RESTRICTION = "toggleRestriction";
-const PROPERTY_AUTO_RESET_GROUP_NAME = "autoResetGroupName"; // comma-separated list, substring match
+const PROPERTY_AUTO_RESET_GROUP_NAME = "autoResetGroupName"; // comma/newline-separated, partial match (contains)
 
 const NODE_TYPE = "Beyond Fast Groups Muter With Autoreset";
 
 // ------------------------ group/node helpers ------------------------
 
 function getGroupNodes(group) {
-  // Ensure membership list is up to date.
   try {
     group.recomputeInsideNodes?.();
   } catch (e) {
     console.warn("[FGM] group.recomputeInsideNodes failed:", e);
   }
 
-  // Prefer group.nodes if available (Comfy/LiteGraph uses this often)
   if (Array.isArray(group.nodes) && group.nodes.length) return group.nodes;
 
-  // Fallback: _children set
   if (group._children && typeof group._children.forEach === "function") {
     const out = [];
     group._children.forEach((c) => {
-      // In some versions these are nodes directly, so accept anything with an id/type/pos.
       if (c && (c instanceof LGraphNode || c.id != null || c.type || c.pos)) out.push(c);
     });
     return out;
@@ -47,7 +43,6 @@ function changeModeOfNodes(nodeOrNodes, mode) {
 
     node.mode = mode;
 
-    // Subgraphs support (best effort)
     if (node.isSubgraphNode?.() && node.subgraph) {
       const children = node.subgraph.nodes || node.subgraph._nodes || [];
       for (let i = children.length - 1; i >= 0; i--) {
@@ -246,7 +241,7 @@ class FastGroupsService {
 
       if (!nodeCenter) continue;
 
-      const groupBounds = group._bounding; // existing LiteGraph cached bounding
+      const groupBounds = group._bounding;
       if (!groupBounds) continue;
 
       if (
@@ -269,7 +264,6 @@ class FastGroupsService {
     if (!canvas.selected_group_moving && (!this.groupsUnsorted.length || now - this.msLastUnsorted > this.msThreshold)) {
       this.groupsUnsorted = [...(graph._groups || [])];
 
-      // best-effort include subgraphs like you had
       const subgraphs = graph.subgraphs?.values?.();
       if (subgraphs) {
         let s;
@@ -277,7 +271,6 @@ class FastGroupsService {
       }
 
       for (const group of this.groupsUnsorted) {
-        // ✅ CRITICAL FIX: ensure group has recomputeInsideNodes() because widget calls it
         if (!group.recomputeInsideNodes) {
           group.recomputeInsideNodes = () => this.recomputeInsideNodesForGroup(group);
         }
@@ -425,18 +418,10 @@ class RgthreeBaseWidget {
     this.isMouseDownedAndOver = false;
     this.downedHitAreasForMove.length = 0;
   }
-  onMouseDown(event, pos, node) {
-    return;
-  }
-  onMouseUp(event, pos, node) {
-    return;
-  }
-  onMouseClick(event, pos, node) {
-    return;
-  }
-  onMouseMove(event, pos, node) {
-    return;
-  }
+  onMouseDown(event, pos, node) { return; }
+  onMouseUp(event, pos, node) { return; }
+  onMouseClick(event, pos, node) { return; }
+  onMouseMove(event, pos, node) { return; }
 }
 
 class FastGroupsToggleRowWidget extends RgthreeBaseWidget {
@@ -451,7 +436,6 @@ class FastGroupsToggleRowWidget extends RgthreeBaseWidget {
   }
 
   doModeChange(force, skipOtherNodeCheck) {
-    // ✅ group has recomputeInsideNodes now (bound by SERVICE)
     this.group.recomputeInsideNodes?.();
 
     const hasAnyActiveNodes = getGroupNodes(this.group).some((n) => n.mode === LiteGraph.ALWAYS);
@@ -473,12 +457,8 @@ class FastGroupsToggleRowWidget extends RgthreeBaseWidget {
     this.group.graph?.setDirtyCanvas(true, false);
   }
 
-  get toggled() {
-    return this.value.toggled;
-  }
-  set toggled(value) {
-    this.value.toggled = value;
-  }
+  get toggled() { return this.value.toggled; }
+  set toggled(value) { this.value.toggled = value; }
 
   toggle(value) {
     value = value == null ? !this.toggled : value;
@@ -529,14 +509,12 @@ class FastGroupsToggleRowWidget extends RgthreeBaseWidget {
       currentX -= Math.max(ctx.measureText(toggleLabelOn).width, ctx.measureText(toggleLabelOff).width);
       currentX -= 7;
       ctx.textAlign = "left";
-      let maxLabelWidth = widgetData.width - widgetData.margin - 10 - (widgetData.width - currentX);
+      const maxLabelWidth = widgetData.width - widgetData.margin - 10 - (widgetData.width - currentX);
       if (label != null) ctx.fillText(fitString(ctx, label, maxLabelWidth), widgetData.margin + 10, posY + height * 0.7);
     }
   }
 
-  serializeValue(node, index) {
-    return this.value;
-  }
+  serializeValue(node, index) { return this.value; }
 
   mouse(event, pos, node) {
     if (event.type == "pointerdown") {
@@ -606,24 +584,22 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
 
     this.addOutput("OPT_CONNECTION", "*");
 
-    // Bind once (so removeEventListener works)
     this._onExecutionComplete = this._onExecutionComplete.bind(this);
   }
 
-  // Local helper (ComfyUI nodes don’t always have addCustomWidget)
   addCustomWidget(widget) {
     this.widgets = this.widgets || [];
     this.widgets.push(widget);
     return widget;
   }
 
-  onAdded(graph) {
+  onAdded(_graph) {
     SERVICE.addFastGroupNode(this);
 
-    // ✅ CRITICAL FIX: use execution_success (executed is not reliable)
+    // Works on most modern ComfyUI builds
     api.addEventListener("execution_success", this._onExecutionComplete);
 
-    // Optional fallback if some builds emit this (harmless if not)
+    // Optional fallback
     api.addEventListener?.("executed", this._onExecutionComplete);
   }
 
@@ -642,22 +618,26 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
     }
   }
 
+  // ✅ Partial match (contains). Accept comma OR newline list.
   resetAutoResetGroups() {
     const autoResetStr = this.properties?.[PROPERTY_AUTO_RESET_GROUP_NAME] || "";
     if (!autoResetStr.trim()) return;
 
     const patterns = autoResetStr
-      .split(",")
-      .map((s) => s.trim().toLowerCase())
+      .split(/[\n,]/g)
+      .map((s) => s.toLowerCase().trim().replace(/\s+/g, " "))
       .filter(Boolean);
 
     if (!patterns.length) return;
 
-    // ✅ FIX: do NOT rely on widget.toggled being in sync; just force OFF for matches.
     for (const widget of this.widgets || []) {
       if (!(widget instanceof FastGroupsToggleRowWidget)) continue;
 
-      const groupTitle = String(widget.group?.title || "").toLowerCase();
+      const groupTitle = String(widget.group?.title || "")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, " ");
+
       if (!groupTitle) continue;
 
       const shouldReset = patterns.some((p) => groupTitle.includes(p));
@@ -668,8 +648,6 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
   }
 
   refreshWidgets() {
-    const canvas = app.canvas;
-
     let sort = this.properties?.[PROPERTY_SORT] || "position";
     let customAlphabet = null;
 
@@ -677,8 +655,8 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
       const customAlphaStr = this.properties?.[PROPERTY_SORT_CUSTOM_ALPHA]?.replace(/\n/g, "");
       if (customAlphaStr && customAlphaStr.trim()) {
         customAlphabet = customAlphaStr.includes(",")
-          ? customAlphaStr.toLocaleLowerCase().split(",")
-          : customAlphaStr.toLocaleLowerCase().trim().split("");
+          ? customAlphaStr.toLocaleLowerCase().split(",").map((s) => s.trim()).filter(Boolean)
+          : customAlphaStr.toLocaleLowerCase().trim().split("").filter(Boolean);
       }
       if (!customAlphabet?.length) {
         sort = "alphanumeric";
@@ -692,11 +670,15 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
       groups.sort((a, b) => {
         let aIndex = -1;
         let bIndex = -1;
+        const at = a.title.toLocaleLowerCase();
+        const bt = b.title.toLocaleLowerCase();
+
         for (const [index, alpha] of customAlphabet.entries()) {
-          aIndex = aIndex < 0 ? (a.title.toLocaleLowerCase().startsWith(alpha) ? index : -1) : aIndex;
-          bIndex = bIndex < 0 ? (b.title.toLocaleLowerCase().startsWith(alpha) ? index : -1) : bIndex;
+          aIndex = aIndex < 0 ? (at.startsWith(alpha) ? index : -1) : aIndex;
+          bIndex = bIndex < 0 ? (bt.startsWith(alpha) ? index : -1) : bIndex;
           if (aIndex > -1 && bIndex > -1) break;
         }
+
         if (aIndex > -1 && bIndex > -1) {
           const ret = aIndex - bIndex;
           if (ret === 0) return a.title.localeCompare(b.title);
@@ -711,9 +693,7 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
     if (filterColors.length) {
       filterColors = filterColors.map((color) => {
         color = color.trim().toLocaleLowerCase();
-        if (LGraphCanvas.node_colors[color]) {
-          color = LGraphCanvas.node_colors[color].groupcolor;
-        }
+        if (LGraphCanvas.node_colors[color]) color = LGraphCanvas.node_colors[color].groupcolor;
         color = color.replace("#", "").toLocaleLowerCase();
         if (color.length === 3) color = color.replace(/(.)(.)(.)/, "$1$1$2$2$3$3");
         return `#${color}`;
@@ -723,7 +703,6 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
     let index = 0;
 
     for (const group of groups) {
-      // Filter by color
       if (filterColors.length) {
         let groupColor = group.color?.replace("#", "").trim().toLocaleLowerCase();
         if (!groupColor) continue;
@@ -732,7 +711,6 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
         if (!filterColors.includes(groupColor)) continue;
       }
 
-      // Filter by title regex
       if (this.properties?.[PROPERTY_MATCH_TITLE]?.trim()) {
         try {
           if (!new RegExp(this.properties[PROPERTY_MATCH_TITLE], "i").exec(group.title)) continue;
@@ -742,14 +720,13 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
         }
       }
 
-      // showAllGraphs behavior (your original)
       const showAllGraphs = this.properties?.[PROPERTY_SHOW_ALL_GRAPHS];
       if (!showAllGraphs && group.graph !== app.canvas.getCurrentGraph()) continue;
 
       let isDirty = false;
       const widgetLabel = `Enable ${group.title}`;
-
       let widget = this.widgets.find((w) => w.label === widgetLabel);
+
       if (!widget) {
         this.tempSize = [...this.size];
         widget = this.addCustomWidget(new FastGroupsToggleRowWidget(group, this));
@@ -798,34 +775,6 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
     return size;
   }
 
-  async handleAction(action) {
-    if (action === "Mute all" || action === "Bypass all") {
-      const alwaysOne = this.properties?.[PROPERTY_RESTRICTION] === "always one";
-      for (const [index, widget] of this.widgets.entries()) {
-        widget?.doModeChange(alwaysOne && !index ? true : false, true);
-      }
-    } else if (action === "Enable all") {
-      const onlyOne = this.properties?.[PROPERTY_RESTRICTION]?.includes(" one");
-      for (const [index, widget] of this.widgets.entries()) {
-        widget?.doModeChange(onlyOne && index > 0 ? false : true, true);
-      }
-    } else if (action === "Toggle all") {
-      const onlyOne = this.properties?.[PROPERTY_RESTRICTION]?.includes(" one");
-      let foundOne = false;
-      for (const widget of this.widgets.entries()) {
-        // kept as you had (not used heavily)
-      }
-      for (const [index, widget] of this.widgets.entries()) {
-        let newValue = onlyOne && foundOne ? false : !widget.value;
-        foundOne = foundOne || newValue;
-        widget?.doModeChange(newValue, true);
-      }
-      if (!foundOne && this.properties?.[PROPERTY_RESTRICTION] === "always one") {
-        this.widgets[this.widgets.length - 1]?.doModeChange(true, true);
-      }
-    }
-  }
-
   removeWidget(widget) {
     if (typeof widget === "number") widget = this.widgets[widget];
     if (!widget) return;
@@ -839,8 +788,7 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
       <p>The ${this.type || "Fast Groups Muter With Autoreset"} is an input-less node that automatically collects all groups in your current
       workflow and allows you to quickly ${this.helpActions} all nodes within the group.</p>
       <ul>
-        <li>
-          <p><strong>Properties.</strong></p>
+        <li><p><strong>Properties.</strong></p>
           <ul>
             <li><p><code>${PROPERTY_MATCH_COLORS}</code> - Filter groups by color (comma separated).</p></li>
             <li><p><code>${PROPERTY_MATCH_TITLE}</code> - Filter groups by title match (regex supported).</p></li>
@@ -849,7 +797,7 @@ class FastGroupsMuterWithAutoreset extends LGraphNode {
             <li><p><code>${PROPERTY_SORT}</code> - position | alphanumeric | custom alphabet. <i>(default: position)</i></p></li>
             <li><p><code>${PROPERTY_SORT_CUSTOM_ALPHA}</code> - custom alphabet value.</p></li>
             <li><p><code>${PROPERTY_RESTRICTION}</code> - default | max one | always one.</p></li>
-            <li><p><code>${PROPERTY_AUTO_RESET_GROUP_NAME}</code> - NEW: comma-separated substrings. Matching group toggles are forced OFF after execution.</p></li>
+            <li><p><code>${PROPERTY_AUTO_RESET_GROUP_NAME}</code> - NEW: comma/newline-separated substrings. If group title contains any token, it is forced OFF after execution.</p></li>
           </ul>
         </li>
       </ul>`;
